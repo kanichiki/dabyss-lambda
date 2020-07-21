@@ -36,32 +36,57 @@ const createLineClient = async (): Promise<line.Client> => {
     return client;
 }
 
-export const getChannelId = async (): Promise<string> => {
-    const secret: { [key: string]: string } = await getLineConfig();
-    return secret.channelId;
-}
-
-export const replyMessage = async (replyToken: string, messages: line.Message | line.Message[]): Promise<void> => {
-    if (!lineClient) {
-        lineClient = await createLineClient();
+export /**
+ * channelId取得
+ *
+ * @returns {Promise<string>}
+ */
+    const getChannelId = async (): Promise<string> => {
+        const secret: { [key: string]: string } = await getLineConfig();
+        return secret.channelId;
     }
 
-    await lineClient.replyMessage(replyToken, messages);
-}
+export /**
+ * messageをreplyする
+ *
+ * @param {string} replyToken
+ * @param {(line.Message | line.Message[])} messages
+ * @returns {Promise<void>}
+ */
+    const replyMessage = async (replyToken: string, messages: line.Message | line.Message[]): Promise<void> => {
+        if (!lineClient) {
+            lineClient = await createLineClient();
+        }
 
-export const pushMessage = async (to: string, messages: line.Message | line.Message[]): Promise<void> => {
-    if (!lineClient) {
-        lineClient = await createLineClient();
+        await lineClient.replyMessage(replyToken, messages);
     }
 
-    await lineClient.pushMessage(to, messages);
-}
+export /**
+ * messageをpush
+ *
+ * @param {string} to
+ * @param {(line.Message | line.Message[])} messages
+ * @returns {Promise<void>}
+ */
+    const pushMessage = async (to: string, messages: line.Message | line.Message[]): Promise<void> => {
+        if (!lineClient) {
+            lineClient = await createLineClient();
+        }
 
-export const getProfile = async (userId: string): Promise<line.Profile> => {
-    if (!lineClient) {
-        lineClient = await createLineClient();
+        await lineClient.pushMessage(to, messages);
     }
 
-    const profile: line.Profile = await lineClient.getProfile(userId);
-    return profile;
-}
+export /**
+ * profileを取得
+ *
+ * @param {string} userId
+ * @returns {Promise<line.Profile>}
+ */
+    const getProfile = async (userId: string): Promise<line.Profile> => {
+        if (!lineClient) {
+            lineClient = await createLineClient();
+        }
+
+        const profile: line.Profile = await lineClient.getProfile(userId);
+        return profile;
+    }

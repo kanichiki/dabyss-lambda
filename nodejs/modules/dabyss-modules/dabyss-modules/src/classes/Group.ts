@@ -3,7 +3,7 @@ import { Game } from './Game';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
 /**
- *
+ * Groupクラス
  *
  * @export
  * @class Group
@@ -18,7 +18,7 @@ export class Group {
     isFinishing: boolean;
 
     /**
-     * Creates an instance of Group.
+     * Groupクラスのコンストラクタ
      * @param {string} groupId
      * @memberof Group
      */
@@ -91,6 +91,12 @@ export class Group {
         }
     }
 
+    /**
+     * Groupをリセット
+     *
+     * @returns {Promise<void>}
+     * @memberof Group
+     */
     async resetGroup(): Promise<void> {
         const game: Game = await Game.createInstance(this.groupId);
         await game.deleteUsersGroupId();

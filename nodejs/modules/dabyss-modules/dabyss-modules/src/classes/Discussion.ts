@@ -2,6 +2,13 @@ import * as aws from "../clients/awsClient";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import * as commonFunction from '../functions/commonFunction';
 
+/**
+ * ディスカッションクラス
+ * 話し合いに関するクラス
+ *
+ * @export
+ * @class Discussion
+ */
 export class Discussion {
     discussionTable: string;
     gameId: number;
@@ -11,11 +18,13 @@ export class Discussion {
     timer: string;
     startTime: string;
     endTime: string;
+    isDiscussing: boolean;
 
     /**
-     * Creates an instance of Discussion.
+     * ディスカッションクラスのコンストラクタ
      * @param {number} gameId
      * @param {number} day
+     * @param {string} groupId
      * @memberof Discussion
      */
     constructor(gameId: number, day: number, groupId: string) {
@@ -31,8 +40,15 @@ export class Discussion {
         this.timer = "";
         this.startTime = "";
         this.endTime = "";
+        this.isDiscussing = false;
     }
 
+    /**
+     * 初期化
+     *
+     * @returns {Promise<void>}
+     * @memberof Discussion
+     */
     async init(): Promise<void> {
         try {
             const data: DocumentClient.GetItemOutput = await aws.dynamoGet(this.discussionTable, this.discussionKey);
@@ -41,6 +57,7 @@ export class Discussion {
                 this.timer = discussion.timer as string;
                 this.startTime = discussion.start_time as string;
                 this.endTime = discussion.end_time as string;
+                this.isDiscussing = discussion.is_discussing as boolean;
             } else {
                 throw new Error("Disucussionデータが見つかりません");
             }
@@ -50,12 +67,33 @@ export class Discussion {
         }
     }
 
+    /**
+     * ディスカッションクラスのインスタンス作成
+     *
+     * @static
+     * @param {number} gameId
+     * @param {number} day
+     * @param {string} groupId
+     * @returns {Promise<Discussion>}
+     * @memberof Discussion
+     */
     static async createInstance(gameId: number, day: number, groupId: string): Promise<Discussion> {
         const discussion: Discussion = new Discussion(gameId, day, groupId);
         await discussion.init();
         return discussion;
     }
 
+    /**
+     * ディスカッションのデータ挿入
+     *
+     * @static
+     * @param {number} gameId
+     * @param {number} day
+     * @param {string} groupId
+     * @param {string} timer
+     * @returns {Promise<void>}
+     * @memberof Discussion
+     */
     static async putDiscussion(gameId: number, day: number, groupId: string, timer: string): Promise<void> {
         try {
             const startTime: string = await commonFunction.getCurrentTime();
@@ -66,7 +104,8 @@ export class Discussion {
                 group_id: groupId,
                 timer: timer,
                 start_time: startTime,
-                end_time: endTime
+                end_time: endTime,
+                is_discussing: true
             }
 
             aws.dynamoPut("dabyss-dev-discussion", item);
@@ -75,6 +114,12 @@ export class Discussion {
         }
     }
 
+    /**
+     * 残り時間を「○分✖︎✖︎秒」の形で取得
+     *
+     * @returns {Promise<string>}
+     * @memberof Discussion
+     */
     async getRemainingTime(): Promise<string> {
         const remainingTime: commonFunction.Interval = await commonFunction.getRemainingTime(this.endTime);
         const remainingTimeString: string = await commonFunction.convertIntervalToTimerString(remainingTime);

@@ -46,7 +46,6 @@ export class Game {
     settingStatus: boolean[];
     timer: string;
     winner: string;
-    positionConfirmStatus: boolean[];
     positions: string[];
 
     discussion: Discussion;
@@ -81,7 +80,6 @@ export class Game {
         this.settingStatus = [];
         this.timer = "00:03:00";
         this.winner = "";
-        this.positionConfirmStatus = [];
         this.positions = [];
 
         this.discussion = new Discussion(this.gameId, this.day, this.groupId);
@@ -192,6 +190,12 @@ export class Game {
         }
     }
 
+    /**
+     * 日付更新
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     async updateDay(): Promise<void> {
         this.day++;
         aws.dynamoUpdate(this.gameTable, this.gameKey, "day", this.day);
@@ -214,6 +218,13 @@ export class Game {
         return res;
     }
 
+    /**
+     * 入力ユーザー以外の表示名を配列で取得
+     *
+     * @param {number} index
+     * @returns {Promise<string[]>}
+     * @memberof Game
+     */
     async getDisplayNamesExceptOneself(index: number): Promise<string[]> {
         let res: string[] = [];
         for (let i = 0; i < this.userIds.length; i++) {
@@ -226,6 +237,13 @@ export class Game {
         return res;
     }
 
+    /**
+     * 入力ユーザー以外のインデックス配列取得
+     *
+     * @param {number} index
+     * @returns {Promise<number[]>}
+     * @memberof Game
+     */
     async getUserIndexesExceptOneself(index: number): Promise<number[]> {
         let res: number[] = [];
         for (let i = 0; i < this.userIds.length; i++) {
@@ -236,6 +254,14 @@ export class Game {
         return res;
     }
 
+    /**
+     * targetIndexがonesIndex以外の範囲内インデックスであるかどうか
+     *
+     * @param {number} onesIndex
+     * @param {number} targetIndex
+     * @returns {Promise<boolean>}
+     * @memberof Game
+     */
     async existsUserIndexExceptOneself(onesIndex: number, targetIndex: number): Promise<boolean> {
         const indexes = await this.getUserIndexesExceptOneself(onesIndex);
         let res: boolean = false;
@@ -260,6 +286,13 @@ export class Game {
         return displayNames[index];
     }
 
+    /**
+     * インデックスの配列に対応した表示名の配列を返す
+     *
+     * @param {number[]} indexes
+     * @returns {Promise<string[]>}
+     * @memberof Game
+     */
     async getDisplayNamesFromIndexes(indexes: number[]): Promise<string[]> {
         const displayNames = await this.getDisplayNames();
         let res: string[] = [];
@@ -269,6 +302,12 @@ export class Game {
         return res;
     }
 
+    /**
+     * ゲームを始めるのに必要な最小の人数を返す
+     *
+     * @returns {Promise<number>}
+     * @memberof Game
+     */
     async getMinNumber(): Promise<number> {
         const minNumber: number = games[this.gameName]["minNumber"];
         return minNumber;
@@ -283,7 +322,8 @@ export class Game {
      * @memberof Game
      */
     async appendUserId(userId: string): Promise<void> {
-        aws.dynamoAppend(this.gameTable, this.gameKey, "user_ids", userId);
+        this.userIds.push(userId);
+        aws.dynamoUpdate(this.gameTable, this.gameKey, "user_ids", this.userIds);
     }
 
     /**
@@ -408,6 +448,14 @@ export class Game {
         return res;
     }
 
+    /**
+     * 入力の設定名の設定ステータスをboolに更新
+     *
+     * @param {string} name
+     * @param {boolean} bool
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     async updateSettingState(name: string, bool: boolean): Promise<void> {
         const settingIndex: number = await this.getSettingIndex(name);
         this.settingStatus[settingIndex] = bool;
@@ -499,6 +547,13 @@ export class Game {
         return timerString;
     }
 
+    /**
+     * timer設定を更新
+     *
+     * @param {string} time
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     async updateTimer(time: string): Promise<void> {
         this.timer = "00:" + time;
         aws.dynamoUpdate(this.gameTable, this.gameKey, "timer", this.timer);
@@ -526,6 +581,12 @@ export class Game {
         Discussion.putDiscussion(this.gameId, this.day, this.groupId, this.timer);
     }
 
+    /**
+     * discussionをセット
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     async setDiscussion(): Promise<void> {
         const discussion: Discussion = await Discussion.createInstance(this.gameId, this.day, this.groupId);
         this.discussion = discussion;
@@ -542,11 +603,23 @@ export class Game {
         return remainingTime;
     }
 
+    /**
+     * 最初の投票のデータを挿入
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     async putFirstVote(): Promise<void> {
         const indexes = await this.getUserIndexes();
         Vote.putVote(this.gameId, this.day, 1, indexes, indexes.length);
     }
 
+    /**
+     * 再投票データを挿入
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     async putRevote(): Promise<void> {
         const indexes = await this.vote.getMostPolledUserIndexes();
         const count = this.vote.count + 1;
@@ -554,16 +627,36 @@ export class Game {
         Vote.putVote(this.gameId, this.day, count, indexes, userNumber);
     }
 
+    /**
+     * 投票データをセット
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     async setVote(): Promise<void> {
         const vote: Vote = await Vote.createInstance(this.gameId);
         this.vote = vote;
     }
 
+    /**
+     * 勝者を更新
+     *
+     * @param {string} winner
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     async updateWinner(winner: string): Promise<void> {
         this.winner = winner;
         aws.dynamoUpdate(this.gameTable, this.gameKey, "winner", this.winner);
     }
 
+    /**
+     * 表示名が参加者に存在するかどうかを返す
+     *
+     * @param {string} name
+     * @returns {Promise<boolean>}
+     * @memberof Game
+     */
     async displayNameExists(name: string): Promise<boolean> {
         const displayNames: string[] = await this.getDisplayNames();
         let res: boolean = false;
@@ -576,39 +669,37 @@ export class Game {
         return res;
     }
 
-    async updateDefaultPositionConfirmStatus(): Promise<void> {
-        const userNumber: number = await this.getUserNumber();
-        this.positionConfirmStatus = Array(userNumber).fill(false);
-        aws.dynamoUpdate(this.gameTable, this.gameKey, "position_confirm_status", this.positionConfirmStatus);
-    }
 
-    async updatePositionConfirmState(index: number): Promise<void> {
-        this.positionConfirmStatus[index] = true;
-        aws.dynamoUpdate(this.gameTable, this.gameKey, "position_confirm_status", this.positionConfirmStatus);
-    }
-
-    async isPositionConfirmCompleted(): Promise<boolean> {
-        let res: boolean = true;
-        for (const state of this.positionConfirmStatus) {
-            if (!state) {
-                res = false;
-                break;
-            }
-        }
-        return res;
-    }
-
+    /**
+     * アクションデータをセット
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     async setAction(): Promise<void> {
         const action: Action = await Action.createInstance(this.gameId, this.day);
         this.action = action;
     }
 
+    /**
+     * 0日目のアクションデータの初期値を挿入
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     async putZeroAction(): Promise<void> {
         const userNumber: number = await this.getUserNumber();
         const status: boolean[] = Array(userNumber).fill(false);
         Action.putAction(this.gameId, this.day, status);
     }
 
+    /**
+     * positionNameに一致する役職のインデックスの配列を取得
+     *
+     * @param {string} positionName
+     * @returns {Promise<number[]>}
+     * @memberof Game
+     */
     async getPositionIndexes(positionName: string): Promise<number[]> {
         const res: number[] = [];
         for (let i = 0; i < this.positions.length; i++) {
@@ -619,6 +710,13 @@ export class Game {
         return res;
     }
 
+    /**
+     * 入力の役職のターゲットを配列で取得
+     *
+     * @param {string} positionName
+     * @returns {Promise<number[]>}
+     * @memberof Game
+     */
     async getTargetsOfPosition(positionName: string): Promise<number[]> {
         const indexes: number[] = (await this.getPositionIndexes(positionName));
         let targets = [];
@@ -628,6 +726,13 @@ export class Game {
         return targets;
     }
 
+    /**
+     * 入力の役職のターゲットを取得
+     *
+     * @param {string} positionName
+     * @returns {Promise<number>}
+     * @memberof Game
+     */
     async getTargetOfPosition(positionName: string): Promise<number> {
         const targets = await this.getTargetsOfPosition(positionName);
         return targets[0];

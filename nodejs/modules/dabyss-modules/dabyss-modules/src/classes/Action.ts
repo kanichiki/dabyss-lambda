@@ -4,13 +4,26 @@ import * as commonFunction from '../functions/commonFunction';
 
 const actionTable = "dabyss-dev-action";
 
+/**
+ * アクションのクラス
+ *
+ * @export
+ * @class Action
+ */
 export class Action {
     gameId: number;
     day: number;
     actionKey: DocumentClient.Key;
-    actionStatus: boolean[];
-    targets: number[];
+    actionStatus: boolean[]; // 各プレイヤーがアクションしたかどうかの配列
+    targets: number[]; // 各プレイヤーのターゲットの配列。ターゲットがいない場合やデフォルトは-1
 
+    /**
+     * アクションクラスのコンストラクタ
+     * 
+     * @param {number} gameId
+     * @param {number} day
+     * @memberof Action
+     */
     constructor(gameId: number, day: number) {
         this.gameId = gameId;
         this.day = day;
@@ -22,6 +35,12 @@ export class Action {
         this.targets = [];
     }
 
+    /**
+     * データで初期化
+     *
+     * @returns {Promise<void>}
+     * @memberof Action
+     */
     async init(): Promise<void> {
         try {
             const data: DocumentClient.GetItemOutput = await aws.dynamoGet(actionTable, this.actionKey);
@@ -37,12 +56,31 @@ export class Action {
         }
     }
 
+    /**
+     * アクションインスタンス作成
+     *
+     * @static
+     * @param {number} gameId
+     * @param {number} day
+     * @returns {Promise<Action>}
+     * @memberof Action
+     */
     static async createInstance(gameId: number, day: number): Promise<Action> {
         const action: Action = new Action(gameId, day);
         await action.init();
         return action;
     }
 
+    /**
+     * アクションデータ挿入
+     *
+     * @static
+     * @param {number} gameId
+     * @param {number} day
+     * @param {boolean[]} defaultStatus
+     * @returns {Promise<void>}
+     * @memberof Action
+     */
     static async putAction(gameId: number, day: number, defaultStatus: boolean[]): Promise<void> {
         const targets = Array(defaultStatus.length).fill(-1);
         try {
@@ -59,25 +97,62 @@ export class Action {
         }
     }
 
+    /**
+     * ユーザーがアクション済みかどうか返す
+     *
+     * @param {number} index
+     * @returns {Promise<boolean>}
+     * @memberof Action
+     */
     async isActedUser(index: number): Promise<boolean> {
         return this.actionStatus[index]
     }
 
+    /**
+     * アクションステータスをtrueに
+     *
+     * @param {number} index
+     * @returns {Promise<void>}
+     * @memberof Action
+     */
     async updateActionStateTrue(index: number): Promise<void> {
         this.actionStatus[index] = true;
         aws.dynamoUpdate(actionTable, this.actionKey, "action_status", this.actionStatus);
     }
 
+    /**
+     * ターゲットを更新
+     *
+     * @param {number} index
+     * @param {number} target
+     * @returns {Promise<void>}
+     * @memberof Action
+     */
     async updateTarget(index: number, target: number): Promise<void> {
         this.targets[index] = target;
         aws.dynamoUpdate(actionTable, this.actionKey, "targets", this.targets);
     }
 
+    /**
+     * アクションする
+     * アクションステータスをtrueにしてターゲットを更新する
+     *
+     * @param {number} userIndex
+     * @param {number} target
+     * @returns {Promise<void>}
+     * @memberof Action
+     */
     async act(userIndex: number, target: number): Promise<void> {
         this.updateActionStateTrue(userIndex);
         this.updateTarget(userIndex, target);
     }
 
+    /**
+     * アクションが完了しているかどうかを返す
+     *
+     * @returns {Promise<boolean>}
+     * @memberof Action
+     */
     async isActionCompleted(): Promise<boolean> {
         let res: boolean = true;
         for (const state of this.actionStatus) {

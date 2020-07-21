@@ -24,7 +24,6 @@ export class User {
      * group_id : 参加中のgroup_id。ゲーム終了時に削除するようにする
      * is_restarting : group_idがあるときに他のゲームに参加しようとしたら確認をするが、その保留ステータス
      */
-
     constructor(userId: string) {
         this.userTable = "dabyss-dev-user";
         this.userId = userId;

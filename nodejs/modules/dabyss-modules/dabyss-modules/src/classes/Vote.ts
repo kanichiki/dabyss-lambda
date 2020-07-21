@@ -5,6 +5,12 @@ import * as commonFunction from '../functions/commonFunction';
 const voteTable = "dabyss-dev-vote";
 const sequenceTable = "dabyss-dev-sequence";
 
+/**
+ * Voteクラス
+ *
+ * @export
+ * @class Vote
+ */
 export class Vote {
     gameId: number;
     voteId: number;
@@ -210,6 +216,12 @@ export class Vote {
         return res;
     }
 
+    /**
+     * 最大得票数のユーザーが複数いるかどうかを返す
+     *
+     * @returns {Promise<boolean>}
+     * @memberof Vote
+     */
     async multipleMostPolledUserExists(): Promise<boolean> {
         let res: boolean = false;
         let max: number = -1;
@@ -225,6 +237,12 @@ export class Vote {
         return res;
     }
 
+    /**
+     * 得票数が最も多いユーザーのインデックスを取得
+     *
+     * @returns {Promise<number>}
+     * @memberof Vote
+     */
     async getMostPolledUserIndex(): Promise<number> {
         let res = -1;
         let max = -1;
@@ -237,11 +255,23 @@ export class Vote {
         return res;
     }
 
+    /**
+     * 最大得票数を取得
+     *
+     * @returns {Promise<number>}
+     * @memberof Vote
+     */
     async getMostPolledNumber(): Promise<number> {
         const number: number = Math.max.apply(null, this.polledNumbers);
         return number;
     }
 
+    /**
+     * 得票数が最大のユーザーを配列で取得
+     *
+     * @returns
+     * @memberof Vote
+     */
     async getMostPolledUserIndexes() {
         const mostPolledNumber: number = await this.getMostPolledNumber();
         let indexes = [];
@@ -253,6 +283,12 @@ export class Vote {
         return indexes;
     }
 
+    /**
+     * 最大得票者の中からランダムで処刑者を選ぶ
+     *
+     * @returns
+     * @memberof Vote
+     */
     async chooseExecutorRandomly() {
         const userIndexes = await this.getMostPolledUserIndexes();
         const index = Math.floor(Math.random() * userIndexes.length); // これは返さない
