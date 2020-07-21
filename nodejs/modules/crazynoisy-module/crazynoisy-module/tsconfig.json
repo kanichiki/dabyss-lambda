@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "outDir": "crazynoisy",
+    "allowJs": true,
+    "target": "ES2015",
+    "module": "commonjs",
+    "strict": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "declaration": true,
+    "pretty": true,
+  },
+  "include": [
+    "./src/**/*.ts"
+  ]
+}

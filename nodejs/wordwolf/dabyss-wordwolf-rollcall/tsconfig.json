@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "outDir": "./output",
+        "allowJs": true,
+        "target": "ES2015",
+        "module": "commonjs",
+        "strict": true
+    },
+    "include": [
+        "./input/**/*"
+    ]
+}

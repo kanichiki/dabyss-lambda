@@ -1,0 +1,17 @@
+{
+  "name": "input",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@line/bot-sdk": "^7.0.0",
+    "amazon-dax-client": "^1.2.4",
+    "aws-sdk": "^2.708.0"
+  },
+  "devDependencies": {},
+  "description": ""
+}
