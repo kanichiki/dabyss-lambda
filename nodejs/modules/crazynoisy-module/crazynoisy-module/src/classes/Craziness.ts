@@ -1,4 +1,4 @@
-import dabyss = require('dabyss/dabyss');
+import dabyss = require('dabyss');
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 
 const crazinessTable = "dabyss-dev-craziness";

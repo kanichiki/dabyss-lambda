@@ -1,4 +1,4 @@
-import dabyss = require('dabyss/dabyss');
+import dabyss = require('dabyss');
 import line = require('@line/bot-sdk');
 
 export const guru = "教祖"
