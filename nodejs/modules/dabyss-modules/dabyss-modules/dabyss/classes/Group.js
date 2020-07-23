@@ -13,14 +13,14 @@ exports.Group = void 0;
 const aws = require("../clients/awsClient");
 const Game_1 = require("./Game");
 /**
- *
+ * Groupクラス
  *
  * @export
  * @class Group
  */
 class Group {
     /**
-     * Creates an instance of Group.
+     * Groupクラスのコンストラクタ
      * @param {string} groupId
      * @memberof Group
      */
@@ -95,6 +95,12 @@ class Group {
             }
         });
     }
+    /**
+     * Groupをリセット
+     *
+     * @returns {Promise<void>}
+     * @memberof Group
+     */
     resetGroup() {
         return __awaiter(this, void 0, void 0, function* () {
             const game = yield Game_1.Game.createInstance(this.groupId);

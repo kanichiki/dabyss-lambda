@@ -12,21 +12,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const aws = require("aws-sdk");
 exports.handler = (event, context) => __awaiter(void 0, void 0, void 0, function* () {
     const obj = JSON.parse(event.body);
-    console.log(obj);
-    const promises = [];
     const lineEvents = obj.events;
+    console.log(lineEvents);
     const stepFunctions = new aws.StepFunctions();
     for (const lineEvent of lineEvents) {
-        const eventObject = {
-            event: lineEvent
-        };
-        const input = {
-            stateMachineArn: "arn:aws:states:ap-northeast-1:126640255293:stateMachine:dabyss-dev-state-machine",
-            input: JSON.stringify(eventObject)
-        };
-        promises.push(stepFunctions.startExecution(input, (err, data) => {
-        }).promise());
+        if (lineEvent.replyToken != undefined) {
+            const eventObject = {
+                event: lineEvent
+            };
+            const input = {
+                stateMachineArn: "arn:aws:states:ap-northeast-1:126640255293:stateMachine:dabyss-dev-state-machine",
+                input: JSON.stringify(eventObject),
+                name: "a"
+            };
+            yield stepFunctions.startExecution(input, (err, data) => {
+            }).promise();
+        }
     }
-    yield Promise.all(promises);
     return;
 });

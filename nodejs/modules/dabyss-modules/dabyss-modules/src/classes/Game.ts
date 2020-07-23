@@ -322,7 +322,10 @@ export class Game {
      * @memberof Game
      */
     async appendUserId(userId: string): Promise<void> {
-        this.userIds.push(userId);
+        const isUserExists = await this.isUserExists(userId);
+        if (!isUserExists) {
+            this.userIds.push(userId);
+        }
         aws.dynamoUpdate(this.gameTable, this.gameKey, "user_ids", this.userIds);
     }
 

@@ -1,4 +1,10 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
+/**
+ * Voteクラス
+ *
+ * @export
+ * @class Vote
+ */
 export declare class Vote {
     gameId: number;
     voteId: number;
@@ -92,9 +98,39 @@ export declare class Vote {
      * @memberof Vote
      */
     isVoteCompleted(): Promise<boolean>;
+    /**
+     * 最大得票数のユーザーが複数いるかどうかを返す
+     *
+     * @returns {Promise<boolean>}
+     * @memberof Vote
+     */
     multipleMostPolledUserExists(): Promise<boolean>;
+    /**
+     * 得票数が最も多いユーザーのインデックスを取得
+     *
+     * @returns {Promise<number>}
+     * @memberof Vote
+     */
     getMostPolledUserIndex(): Promise<number>;
+    /**
+     * 最大得票数を取得
+     *
+     * @returns {Promise<number>}
+     * @memberof Vote
+     */
     getMostPolledNumber(): Promise<number>;
+    /**
+     * 得票数が最大のユーザーを配列で取得
+     *
+     * @returns
+     * @memberof Vote
+     */
     getMostPolledUserIndexes(): Promise<number[]>;
+    /**
+     * 最大得票者の中からランダムで処刑者を選ぶ
+     *
+     * @returns
+     * @memberof Vote
+     */
     chooseExecutorRandomly(): Promise<number>;
 }

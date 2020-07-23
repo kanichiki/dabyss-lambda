@@ -194,8 +194,10 @@ const replyBrainwashCompleted = (crazyNoisy) => __awaiter(void 0, void 0, void 0
     return replyWinnerMessage;
 });
 const replyCitizenWin = (crazyNoisy) => __awaiter(void 0, void 0, void 0, function* () {
-    yield crazyNoisy.updateGameStatus("winner"); // 勝者発表状況をtrueにする
+    yield crazyNoisy.updateGameStatus("winner");
+    yield crazyNoisy.updateWinner("citizen");
     const winnerIndexes = yield crazyNoisy.getWinnerIndexes();
+    console.log("勝者:" + winnerIndexes);
     const displayNames = yield crazyNoisy.getDisplayNames();
     const replyWinner = yield Promise.resolve().then(() => require("./template/replyWinner"));
     const replyWinnerMessage = yield replyWinner.main(displayNames, false, winnerIndexes);

@@ -1,6 +1,6 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 /**
- *
+ * Groupクラス
  *
  * @export
  * @class Group
@@ -14,7 +14,7 @@ export declare class Group {
     isRestarting: boolean;
     isFinishing: boolean;
     /**
-     * Creates an instance of Group.
+     * Groupクラスのコンストラクタ
      * @param {string} groupId
      * @memberof Group
      */
@@ -42,6 +42,12 @@ export declare class Group {
      * @memberof Group
      */
     putGroup(): Promise<void>;
+    /**
+     * Groupをリセット
+     *
+     * @returns {Promise<void>}
+     * @memberof Group
+     */
     resetGroup(): Promise<void>;
     /**
      * ステータスを更新

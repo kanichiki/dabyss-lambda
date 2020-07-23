@@ -229,8 +229,10 @@ const replyBrainwashCompleted = async (crazyNoisy: crazynoisy.CrazyNoisy): Promi
 
 
 const replyCitizenWin = async (crazyNoisy: crazynoisy.CrazyNoisy): Promise<line.Message[]> => {
-    await crazyNoisy.updateGameStatus("winner"); // 勝者発表状況をtrueにする
+    await crazyNoisy.updateGameStatus("winner");
+    await crazyNoisy.updateWinner("citizen");
     const winnerIndexes = await crazyNoisy.getWinnerIndexes();
+    console.log("勝者:" + winnerIndexes);
 
     const displayNames = await crazyNoisy.getDisplayNames();
     const replyWinner = await import("./template/replyWinner");

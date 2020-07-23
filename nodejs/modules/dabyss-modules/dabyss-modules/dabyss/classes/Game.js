@@ -65,9 +65,8 @@ class Game {
         this.settingStatus = [];
         this.timer = "00:03:00";
         this.winner = "";
-        this.positionConfirmStatus = [];
         this.positions = [];
-        this.discussion = new Discussion_1.Discussion(this.gameId, this.day);
+        this.discussion = new Discussion_1.Discussion(this.gameId, this.day, this.groupId);
         this.vote = new Vote_1.Vote(this.gameId);
         this.action = new Action_1.Action(this.gameId, this.day);
     }
@@ -175,6 +174,12 @@ class Game {
             }
         });
     }
+    /**
+     * 日付更新
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     updateDay() {
         return __awaiter(this, void 0, void 0, function* () {
             this.day++;
@@ -198,6 +203,13 @@ class Game {
             return res;
         });
     }
+    /**
+     * 入力ユーザー以外の表示名を配列で取得
+     *
+     * @param {number} index
+     * @returns {Promise<string[]>}
+     * @memberof Game
+     */
     getDisplayNamesExceptOneself(index) {
         return __awaiter(this, void 0, void 0, function* () {
             let res = [];
@@ -211,6 +223,13 @@ class Game {
             return res;
         });
     }
+    /**
+     * 入力ユーザー以外のインデックス配列取得
+     *
+     * @param {number} index
+     * @returns {Promise<number[]>}
+     * @memberof Game
+     */
     getUserIndexesExceptOneself(index) {
         return __awaiter(this, void 0, void 0, function* () {
             let res = [];
@@ -222,6 +241,14 @@ class Game {
             return res;
         });
     }
+    /**
+     * targetIndexがonesIndex以外の範囲内インデックスであるかどうか
+     *
+     * @param {number} onesIndex
+     * @param {number} targetIndex
+     * @returns {Promise<boolean>}
+     * @memberof Game
+     */
     existsUserIndexExceptOneself(onesIndex, targetIndex) {
         return __awaiter(this, void 0, void 0, function* () {
             const indexes = yield this.getUserIndexesExceptOneself(onesIndex);
@@ -248,6 +275,13 @@ class Game {
             return displayNames[index];
         });
     }
+    /**
+     * インデックスの配列に対応した表示名の配列を返す
+     *
+     * @param {number[]} indexes
+     * @returns {Promise<string[]>}
+     * @memberof Game
+     */
     getDisplayNamesFromIndexes(indexes) {
         return __awaiter(this, void 0, void 0, function* () {
             const displayNames = yield this.getDisplayNames();
@@ -258,6 +292,12 @@ class Game {
             return res;
         });
     }
+    /**
+     * ゲームを始めるのに必要な最小の人数を返す
+     *
+     * @returns {Promise<number>}
+     * @memberof Game
+     */
     getMinNumber() {
         return __awaiter(this, void 0, void 0, function* () {
             const minNumber = games[this.gameName]["minNumber"];
@@ -273,7 +313,11 @@ class Game {
      */
     appendUserId(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            aws.dynamoAppend(this.gameTable, this.gameKey, "user_ids", userId);
+            const isUserExists = yield this.isUserExists(userId);
+            if (!isUserExists) {
+                this.userIds.push(userId);
+            }
+            aws.dynamoUpdate(this.gameTable, this.gameKey, "user_ids", this.userIds);
         });
     }
     /**
@@ -403,6 +447,14 @@ class Game {
             return res;
         });
     }
+    /**
+     * 入力の設定名の設定ステータスをboolに更新
+     *
+     * @param {string} name
+     * @param {boolean} bool
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     updateSettingState(name, bool) {
         return __awaiter(this, void 0, void 0, function* () {
             const settingIndex = yield this.getSettingIndex(name);
@@ -496,6 +548,13 @@ class Game {
             return timerString;
         });
     }
+    /**
+     * timer設定を更新
+     *
+     * @param {string} time
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     updateTimer(time) {
         return __awaiter(this, void 0, void 0, function* () {
             this.timer = "00:" + time;
@@ -523,12 +582,18 @@ class Game {
      */
     putDiscussion() {
         return __awaiter(this, void 0, void 0, function* () {
-            Discussion_1.Discussion.putDiscussion(this.gameId, this.day, this.timer);
+            Discussion_1.Discussion.putDiscussion(this.gameId, this.day, this.groupId, this.timer);
         });
     }
+    /**
+     * discussionをセット
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     setDiscussion() {
         return __awaiter(this, void 0, void 0, function* () {
-            const discussion = yield Discussion_1.Discussion.createInstance(this.gameId, this.day);
+            const discussion = yield Discussion_1.Discussion.createInstance(this.gameId, this.day, this.groupId);
             this.discussion = discussion;
         });
     }
@@ -540,17 +605,28 @@ class Game {
      */
     getRemainingTime() {
         return __awaiter(this, void 0, void 0, function* () {
-            const discussion = yield Discussion_1.Discussion.createInstance(this.gameId, this.day);
-            const remainingTime = yield discussion.getRemainingTime();
+            const remainingTime = yield this.discussion.getRemainingTime();
             return remainingTime;
         });
     }
+    /**
+     * 最初の投票のデータを挿入
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     putFirstVote() {
         return __awaiter(this, void 0, void 0, function* () {
             const indexes = yield this.getUserIndexes();
             Vote_1.Vote.putVote(this.gameId, this.day, 1, indexes, indexes.length);
         });
     }
+    /**
+     * 再投票データを挿入
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     putRevote() {
         return __awaiter(this, void 0, void 0, function* () {
             const indexes = yield this.vote.getMostPolledUserIndexes();
@@ -559,18 +635,38 @@ class Game {
             Vote_1.Vote.putVote(this.gameId, this.day, count, indexes, userNumber);
         });
     }
+    /**
+     * 投票データをセット
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     setVote() {
         return __awaiter(this, void 0, void 0, function* () {
             const vote = yield Vote_1.Vote.createInstance(this.gameId);
             this.vote = vote;
         });
     }
+    /**
+     * 勝者を更新
+     *
+     * @param {string} winner
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     updateWinner(winner) {
         return __awaiter(this, void 0, void 0, function* () {
             this.winner = winner;
             aws.dynamoUpdate(this.gameTable, this.gameKey, "winner", this.winner);
         });
     }
+    /**
+     * 表示名が参加者に存在するかどうかを返す
+     *
+     * @param {string} name
+     * @returns {Promise<boolean>}
+     * @memberof Game
+     */
     displayNameExists(name) {
         return __awaiter(this, void 0, void 0, function* () {
             const displayNames = yield this.getDisplayNames();
@@ -584,37 +680,24 @@ class Game {
             return res;
         });
     }
-    updateDefaultPositionConfirmStatus() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userNumber = yield this.getUserNumber();
-            this.positionConfirmStatus = Array(userNumber).fill(false);
-            aws.dynamoUpdate(this.gameTable, this.gameKey, "position_confirm_status", this.positionConfirmStatus);
-        });
-    }
-    updatePositionConfirmState(index) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.positionConfirmStatus[index] = true;
-            aws.dynamoUpdate(this.gameTable, this.gameKey, "position_confirm_status", this.positionConfirmStatus);
-        });
-    }
-    isPositionConfirmCompleted() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let res = true;
-            for (const state of this.positionConfirmStatus) {
-                if (!state) {
-                    res = false;
-                    break;
-                }
-            }
-            return res;
-        });
-    }
+    /**
+     * アクションデータをセット
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     setAction() {
         return __awaiter(this, void 0, void 0, function* () {
             const action = yield Action_1.Action.createInstance(this.gameId, this.day);
             this.action = action;
         });
     }
+    /**
+     * 0日目のアクションデータの初期値を挿入
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     putZeroAction() {
         return __awaiter(this, void 0, void 0, function* () {
             const userNumber = yield this.getUserNumber();
@@ -622,6 +705,13 @@ class Game {
             Action_1.Action.putAction(this.gameId, this.day, status);
         });
     }
+    /**
+     * positionNameに一致する役職のインデックスの配列を取得
+     *
+     * @param {string} positionName
+     * @returns {Promise<number[]>}
+     * @memberof Game
+     */
     getPositionIndexes(positionName) {
         return __awaiter(this, void 0, void 0, function* () {
             const res = [];
@@ -633,6 +723,13 @@ class Game {
             return res;
         });
     }
+    /**
+     * 入力の役職のターゲットを配列で取得
+     *
+     * @param {string} positionName
+     * @returns {Promise<number[]>}
+     * @memberof Game
+     */
     getTargetsOfPosition(positionName) {
         return __awaiter(this, void 0, void 0, function* () {
             const indexes = (yield this.getPositionIndexes(positionName));
@@ -643,6 +740,13 @@ class Game {
             return targets;
         });
     }
+    /**
+     * 入力の役職のターゲットを取得
+     *
+     * @param {string} positionName
+     * @returns {Promise<number>}
+     * @memberof Game
+     */
     getTargetOfPosition(positionName) {
         return __awaiter(this, void 0, void 0, function* () {
             const targets = yield this.getTargetsOfPosition(positionName);

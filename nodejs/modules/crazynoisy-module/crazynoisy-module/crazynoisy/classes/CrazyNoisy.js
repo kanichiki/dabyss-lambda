@@ -316,7 +316,7 @@ class CrazyNoisy extends dabyss.Game {
                     }
                 }
                 else { // 市民陣営勝利なら
-                    if (this.positions[i] == this.positionNames.detective || this.positions[i] == this.positionNames.citizen || this.positionNames.sp) {
+                    if ((this.positions[i] == this.positionNames.detective || this.positions[i] == this.positionNames.citizen) || this.positions[i] == this.positionNames.sp) {
                         res.push(i);
                     }
                 }

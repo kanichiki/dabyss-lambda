@@ -18,7 +18,7 @@ export class Discussion {
     timer: string;
     startTime: string;
     endTime: string;
-    isDiscussing: boolean;
+    isDiscussing: string; // スパースインデックス(議論中の場合はここに"discussing"が入る)
 
     /**
      * ディスカッションクラスのコンストラクタ
@@ -40,7 +40,7 @@ export class Discussion {
         this.timer = "";
         this.startTime = "";
         this.endTime = "";
-        this.isDiscussing = false;
+        this.isDiscussing = "";
     }
 
     /**
@@ -57,7 +57,7 @@ export class Discussion {
                 this.timer = discussion.timer as string;
                 this.startTime = discussion.start_time as string;
                 this.endTime = discussion.end_time as string;
-                this.isDiscussing = discussion.is_discussing as boolean;
+                this.isDiscussing = discussion.is_discussing as string;
             } else {
                 throw new Error("Disucussionデータが見つかりません");
             }
@@ -105,7 +105,7 @@ export class Discussion {
                 timer: timer,
                 start_time: startTime,
                 end_time: endTime,
-                is_discussing: true
+                is_discussing: "discussing"
             }
 
             aws.dynamoPut("dabyss-dev-discussion", item);
@@ -124,6 +124,17 @@ export class Discussion {
         const remainingTime: commonFunction.Interval = await commonFunction.getRemainingTime(this.endTime);
         const remainingTimeString: string = await commonFunction.convertIntervalToTimerString(remainingTime);
         return remainingTimeString;
+    }
+
+    /**
+     * 議論中ステータスをfalseに
+     *
+     * @returns {Promise<void>}
+     * @memberof Discussion
+     */
+    async updateIsDiscussingFalse(): Promise<void> {
+        this.isDiscussing = "none";
+        aws.dynamoUpdate(this.discussionTable, this.discussionKey, "is_discussing", this.isDiscussing);
     }
 
 }

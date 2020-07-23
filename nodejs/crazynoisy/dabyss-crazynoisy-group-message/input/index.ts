@@ -86,6 +86,7 @@ exports.handler = async (event: any, context: any): Promise<void> => {
     }
 
     if (status == "discuss") {
+        await crazyNoisy.setDiscussion();
         // 話し合い中だった場合
 
         if (text == "終了") {
@@ -215,7 +216,7 @@ const replyConfirmYes = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken: st
         promises.push(crazyNoisy.updateDefaultCrazinessIdsInDemo());
     }
     promises.push(crazyNoisy.updateDefaultBrainwashStatus()); // 洗脳ステータスを初期配置
-    promises.push(crazyNoisy.updateDefaultPositionConfirmStatus()); // 役職確認ステータスを全員false
+    promises.push(crazyNoisy.putZeroAction()); // 役職確認ステータスを全員falseに
 
     const userIds = crazyNoisy.userIds;
     const displayNames = await crazyNoisy.getDisplayNames();
@@ -248,6 +249,7 @@ const replyDiscussFinish = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken:
 
     // DB変更操作１，２
     // 投票データを挿入出来たら話し合い終了ステータスをtrueにする同期処理
+    promises.push(crazyNoisy.discussion.updateIsDiscussingFalse());
     promises.push(crazyNoisy.putFirstVote());
     promises.push(crazyNoisy.updateGameStatus("vote"));
 

@@ -93,6 +93,7 @@ exports.handler = (event, context) => __awaiter(void 0, void 0, void 0, function
         // await replyPositionNumber(crazyNoisy, replyToken);
     }
     if (status == "discuss") {
+        yield crazyNoisy.setDiscussion();
         // 話し合い中だった場合
         if (text == "終了") {
             yield replyDiscussFinish(crazyNoisy, replyToken);
@@ -197,7 +198,7 @@ const replyConfirmYes = (crazyNoisy, replyToken) => __awaiter(void 0, void 0, vo
         promises.push(crazyNoisy.updateDefaultCrazinessIdsInDemo());
     }
     promises.push(crazyNoisy.updateDefaultBrainwashStatus()); // 洗脳ステータスを初期配置
-    promises.push(crazyNoisy.updateDefaultPositionConfirmStatus()); // 役職確認ステータスを全員false
+    promises.push(crazyNoisy.putZeroAction()); // 役職確認ステータスを全員falseに
     const userIds = crazyNoisy.userIds;
     const displayNames = yield crazyNoisy.getDisplayNames();
     const positions = crazyNoisy.positions;
@@ -221,6 +222,7 @@ const replyDiscussFinish = (crazyNoisy, replyToken) => __awaiter(void 0, void 0,
     const promises = [];
     // DB変更操作１，２
     // 投票データを挿入出来たら話し合い終了ステータスをtrueにする同期処理
+    promises.push(crazyNoisy.discussion.updateIsDiscussingFalse());
     promises.push(crazyNoisy.putFirstVote());
     promises.push(crazyNoisy.updateGameStatus("vote"));
     const userNumber = yield crazyNoisy.getUserNumber();

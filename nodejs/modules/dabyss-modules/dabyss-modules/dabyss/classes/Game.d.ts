@@ -32,7 +32,6 @@ export declare class Game {
     settingStatus: boolean[];
     timer: string;
     winner: string;
-    positionConfirmStatus: boolean[];
     positions: string[];
     discussion: Discussion;
     vote: Vote;
@@ -79,6 +78,12 @@ export declare class Game {
      * @memberof Game
      */
     putGame(gameName: string): Promise<void>;
+    /**
+     * 日付更新
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     updateDay(): Promise<void>;
     /**
      * 参加者の表示名の配列を取得
@@ -87,8 +92,30 @@ export declare class Game {
      * @memberof Game
      */
     getDisplayNames(): Promise<string[]>;
+    /**
+     * 入力ユーザー以外の表示名を配列で取得
+     *
+     * @param {number} index
+     * @returns {Promise<string[]>}
+     * @memberof Game
+     */
     getDisplayNamesExceptOneself(index: number): Promise<string[]>;
+    /**
+     * 入力ユーザー以外のインデックス配列取得
+     *
+     * @param {number} index
+     * @returns {Promise<number[]>}
+     * @memberof Game
+     */
     getUserIndexesExceptOneself(index: number): Promise<number[]>;
+    /**
+     * targetIndexがonesIndex以外の範囲内インデックスであるかどうか
+     *
+     * @param {number} onesIndex
+     * @param {number} targetIndex
+     * @returns {Promise<boolean>}
+     * @memberof Game
+     */
     existsUserIndexExceptOneself(onesIndex: number, targetIndex: number): Promise<boolean>;
     /**
      * indexの参加者の表示名を取得
@@ -98,7 +125,20 @@ export declare class Game {
      * @memberof Game
      */
     getDisplayName(index: number): Promise<string>;
+    /**
+     * インデックスの配列に対応した表示名の配列を返す
+     *
+     * @param {number[]} indexes
+     * @returns {Promise<string[]>}
+     * @memberof Game
+     */
     getDisplayNamesFromIndexes(indexes: number[]): Promise<string[]>;
+    /**
+     * ゲームを始めるのに必要な最小の人数を返す
+     *
+     * @returns {Promise<number>}
+     * @memberof Game
+     */
     getMinNumber(): Promise<number>;
     /**
      * 参加者追加
@@ -169,6 +209,14 @@ export declare class Game {
      * @memberof Game
      */
     getSettingIndex(name: string): Promise<number>;
+    /**
+     * 入力の設定名の設定ステータスをboolに更新
+     *
+     * @param {string} name
+     * @param {boolean} bool
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     updateSettingState(name: string, bool: boolean): Promise<void>;
     /**
      * indexの設定ステータスをtrueに
@@ -207,6 +255,13 @@ export declare class Game {
      * @memberof Game
      */
     getTimerString(): Promise<string>;
+    /**
+     * timer設定を更新
+     *
+     * @param {string} time
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     updateTimer(time: string): Promise<void>;
     /**
      * ゲームのステータスを更新
@@ -223,6 +278,12 @@ export declare class Game {
      * @memberof Game
      */
     putDiscussion(): Promise<void>;
+    /**
+     * discussionをセット
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     setDiscussion(): Promise<void>;
     /**
      * 残り時間取得
@@ -231,17 +292,79 @@ export declare class Game {
      * @memberof Game
      */
     getRemainingTime(): Promise<string>;
+    /**
+     * 最初の投票のデータを挿入
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     putFirstVote(): Promise<void>;
+    /**
+     * 再投票データを挿入
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     putRevote(): Promise<void>;
+    /**
+     * 投票データをセット
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     setVote(): Promise<void>;
+    /**
+     * 勝者を更新
+     *
+     * @param {string} winner
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     updateWinner(winner: string): Promise<void>;
+    /**
+     * 表示名が参加者に存在するかどうかを返す
+     *
+     * @param {string} name
+     * @returns {Promise<boolean>}
+     * @memberof Game
+     */
     displayNameExists(name: string): Promise<boolean>;
-    updateDefaultPositionConfirmStatus(): Promise<void>;
-    updatePositionConfirmState(index: number): Promise<void>;
-    isPositionConfirmCompleted(): Promise<boolean>;
+    /**
+     * アクションデータをセット
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     setAction(): Promise<void>;
+    /**
+     * 0日目のアクションデータの初期値を挿入
+     *
+     * @returns {Promise<void>}
+     * @memberof Game
+     */
     putZeroAction(): Promise<void>;
+    /**
+     * positionNameに一致する役職のインデックスの配列を取得
+     *
+     * @param {string} positionName
+     * @returns {Promise<number[]>}
+     * @memberof Game
+     */
     getPositionIndexes(positionName: string): Promise<number[]>;
+    /**
+     * 入力の役職のターゲットを配列で取得
+     *
+     * @param {string} positionName
+     * @returns {Promise<number[]>}
+     * @memberof Game
+     */
     getTargetsOfPosition(positionName: string): Promise<number[]>;
+    /**
+     * 入力の役職のターゲットを取得
+     *
+     * @param {string} positionName
+     * @returns {Promise<number>}
+     * @memberof Game
+     */
     getTargetOfPosition(positionName: string): Promise<number>;
 }

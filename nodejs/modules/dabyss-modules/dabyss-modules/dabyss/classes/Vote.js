@@ -13,6 +13,12 @@ exports.Vote = void 0;
 const aws = require("../clients/awsClient");
 const voteTable = "dabyss-dev-vote";
 const sequenceTable = "dabyss-dev-sequence";
+/**
+ * Voteクラス
+ *
+ * @export
+ * @class Vote
+ */
 class Vote {
     /**
      * Creates an instance of Vote.
@@ -218,6 +224,12 @@ class Vote {
             return res;
         });
     }
+    /**
+     * 最大得票数のユーザーが複数いるかどうかを返す
+     *
+     * @returns {Promise<boolean>}
+     * @memberof Vote
+     */
     multipleMostPolledUserExists() {
         return __awaiter(this, void 0, void 0, function* () {
             let res = false;
@@ -235,6 +247,12 @@ class Vote {
             return res;
         });
     }
+    /**
+     * 得票数が最も多いユーザーのインデックスを取得
+     *
+     * @returns {Promise<number>}
+     * @memberof Vote
+     */
     getMostPolledUserIndex() {
         return __awaiter(this, void 0, void 0, function* () {
             let res = -1;
@@ -248,12 +266,24 @@ class Vote {
             return res;
         });
     }
+    /**
+     * 最大得票数を取得
+     *
+     * @returns {Promise<number>}
+     * @memberof Vote
+     */
     getMostPolledNumber() {
         return __awaiter(this, void 0, void 0, function* () {
             const number = Math.max.apply(null, this.polledNumbers);
             return number;
         });
     }
+    /**
+     * 得票数が最大のユーザーを配列で取得
+     *
+     * @returns
+     * @memberof Vote
+     */
     getMostPolledUserIndexes() {
         return __awaiter(this, void 0, void 0, function* () {
             const mostPolledNumber = yield this.getMostPolledNumber();
@@ -266,6 +296,12 @@ class Vote {
             return indexes;
         });
     }
+    /**
+     * 最大得票者の中からランダムで処刑者を選ぶ
+     *
+     * @returns
+     * @memberof Vote
+     */
     chooseExecutorRandomly() {
         return __awaiter(this, void 0, void 0, function* () {
             const userIndexes = yield this.getMostPolledUserIndexes();

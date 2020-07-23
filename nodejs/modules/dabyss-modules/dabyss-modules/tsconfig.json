@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "dabyssss",
+    "outDir": "dabyss",
     "allowJs": true,
     "target": "ES2015",
     "module": "commonjs",
@@ -11,6 +11,6 @@
     "pretty": true,
   },
   "include": [
-    "dabyss-modules/src/**/*.ts"
+    "src/**/*.ts"
   ]
 }
