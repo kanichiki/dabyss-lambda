@@ -1,6 +1,6 @@
 import line = require('@line/bot-sdk');
 import dabyss = require('dabyss');
-import jinro = require('jinro');
+import jinro_module = require('jinro');
 
 process.on('uncaughtException', function (err) {
     console.log(err);
@@ -27,7 +27,7 @@ exports.handler = async (event: any, context: any): Promise<void> => {
         userId = source.userId;
     }
 
-    const jinro: jinro.Jinro = await jinro.jinro.createInstance(groupId);
+    const jinro: jinro_module.Jinro = await jinro_module.jinro.createInstance(groupId);
     const status: string = jinro.gameStatus;
 
     if (status == "action" && jinro.day == 0) {
@@ -72,7 +72,7 @@ exports.handler = async (event: any, context: any): Promise<void> => {
     }
 }
 
-const replyConfirmStatus = async (jinro: jinro.Jinro, replyToken: string): Promise<void> => {
+const replyConfirmStatus = async (jinro: jinro_module.Jinro, replyToken: string): Promise<void> => {
     const displayNames = await jinro.getDisplayNames();
     const confirmStatus = jinro.action.actionStatus;
     let unconfirmed = [];
@@ -86,14 +86,14 @@ const replyConfirmStatus = async (jinro: jinro.Jinro, replyToken: string): Promi
     await dabyss.replyMessage(replyToken, await replyMessage.main(unconfirmed));
 }
 
-const replyRemainingTime = async (jinro: jinro.Jinro, replyToken: string): Promise<void> => {
+const replyRemainingTime = async (jinro: jinro_module.Jinro, replyToken: string): Promise<void> => {
     const remainingTime = await jinro.discussion.getRemainingTime();
 
     const replyMessage = await import("./template/replyRemainingTime");
     await dabyss.replyMessage(replyToken, await replyMessage.main(remainingTime));
 };
 
-const replyVoteSuccess = async (jinro: jinro.Jinro, votedUserIndex: number, userIndex: number, replyToken: string): Promise<void> => {
+const replyVoteSuccess = async (jinro: jinro_module.Jinro, votedUserIndex: number, userIndex: number, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
     const voterDisplayName = await jinro.getDisplayName(userIndex);
@@ -182,7 +182,7 @@ const replyVoteSuccess = async (jinro: jinro.Jinro, votedUserIndex: number, user
     return;
 }
 
-const replyExecutorIsNotGuru = async (jinro: jinro.Jinro, executorDisplayName: string, executorIndex: number): Promise<line.Message[]> => {
+const replyExecutorIsNotGuru = async (jinro: jinro_module.Jinro, executorDisplayName: string, executorIndex: number): Promise<line.Message[]> => {
     const promises: Promise<void>[] = [];
     await jinro.updateBrainwashStateTrue(executorIndex); // 最多投票者洗脳
     promises.push(jinro.addCrazinessId(executorIndex)); // 最多投票者狂気追加
@@ -193,7 +193,7 @@ const replyExecutorIsNotGuru = async (jinro: jinro.Jinro, executorDisplayName: s
     return replyExecutorIsNotGuruMessage;
 }
 
-const replyVoteFinish = async (jinro: jinro.Jinro): Promise<line.Message[]> => {
+const replyVoteFinish = async (jinro: jinro_module.Jinro): Promise<line.Message[]> => {
     const promises: Promise<void>[] = [];
 
     promises.push(jinro.updateGameStatus("action")); // ステータスをアクション中に
@@ -216,7 +216,7 @@ const replyVoteFinish = async (jinro: jinro.Jinro): Promise<line.Message[]> => {
     return replyVoteFinishMessage;
 }
 
-const replyBrainwashCompleted = async (jinro: jinro.Jinro): Promise<line.Message[]> => {
+const replyBrainwashCompleted = async (jinro: jinro_module.Jinro): Promise<line.Message[]> => {
     await jinro.updateGameStatus("winner");
     await jinro.updateWinner("guru");
     const winnerIndexes = await jinro.getWinnerIndexes();
@@ -228,7 +228,7 @@ const replyBrainwashCompleted = async (jinro: jinro.Jinro): Promise<line.Message
 }
 
 
-const replyCitizenWin = async (jinro: jinro.Jinro): Promise<line.Message[]> => {
+const replyCitizenWin = async (jinro: jinro_module.Jinro): Promise<line.Message[]> => {
     await jinro.updateGameStatus("winner"); // 勝者発表状況をtrueにする
     const winnerIndexes = await jinro.getWinnerIndexes();
 
@@ -240,13 +240,13 @@ const replyCitizenWin = async (jinro: jinro.Jinro): Promise<line.Message[]> => {
 
 }
 
-const replySelfVote = async (jinro: jinro.Jinro, userIndex: number, replyToken: string): Promise<void> => {
+const replySelfVote = async (jinro: jinro_module.Jinro, userIndex: number, replyToken: string): Promise<void> => {
     const displayName = await jinro.getDisplayName(userIndex);
     const replyMessage = await import("./template/replySelfVote");
     await dabyss.replyMessage(replyToken, await replyMessage.main(displayName));
 };
 
-const replyDuplicateVote = async (jinro: jinro.Jinro, userIndex: number, replyToken: string): Promise<void> => {
+const replyDuplicateVote = async (jinro: jinro_module.Jinro, userIndex: number, replyToken: string): Promise<void> => {
     const displayName = await jinro.getDisplayName(userIndex);
     const replyMessage = await import("./template/replyDuplicateVote");
     await dabyss.replyMessage(replyToken, await replyMessage.main(displayName));

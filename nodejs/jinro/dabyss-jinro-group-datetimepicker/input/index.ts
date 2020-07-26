@@ -1,6 +1,6 @@
 import line = require('@line/bot-sdk');
 import dabyss = require('dabyss');
-import jinro = require('jinro');
+import jinro_module = require('jinro');
 
 exports.handler = async (event: any, context: any): Promise<void> => {
     const lineEvent: line.PostbackEvent = event.Input.event;
@@ -28,7 +28,7 @@ exports.handler = async (event: any, context: any): Promise<void> => {
         userId = source.userId;
     }
 
-    const jinro: jinro.Jinro = await jinro.Jinro.createInstance(groupId);
+    const jinro: jinro_module.Jinro = await jinro_module.Jinro.createInstance(groupId);
     const status: string = jinro.gameStatus;
 
     if (status == "setting") {
@@ -44,7 +44,7 @@ exports.handler = async (event: any, context: any): Promise<void> => {
     }
 }
 
-const replyTimerChosen = async (jinro: jinro.Jinro, time: string, replyToken: string): Promise<void> => {
+const replyTimerChosen = async (jinro: jinro_module.Jinro, time: string, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
     const settingIndex = await jinro.getSettingIndex("timer");
@@ -62,7 +62,7 @@ const replyTimerChosen = async (jinro: jinro.Jinro, time: string, replyToken: st
     return;
 };
 
-const replyConfirm = async (jinro: jinro.Jinro, replyToken: string): Promise<void> => {
+const replyConfirm = async (jinro: jinro_module.Jinro, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
     const userNumber = await jinro.getUserNumber();

@@ -1,6 +1,6 @@
 import line = require('@line/bot-sdk');
 import dabyss = require('dabyss');
-import jinro = require('jinro');
+import jinro_module = require('jinro');
 
 process.on('uncaughtException', function (err) {
     console.log(err);
@@ -22,7 +22,7 @@ exports.handler = async (event: any, context: any): Promise<void> => {
     const user: dabyss.User = await dabyss.User.createInstance(userId);
     const groupId: string = user.groupId;
 
-    const jinro: jinro.Jinro = await jinro.jinro.createInstance(groupId);
+    const jinro: jinro_module.Jinro = await jinro_module.jinro.createInstance(groupId);
     const status: string = jinro.gameStatus;
     const day: number = jinro.day;
 
@@ -77,7 +77,7 @@ exports.handler = async (event: any, context: any): Promise<void> => {
     }
 }
 
-const replyBasicAction = async (jinro: jinro.Jinro, position: string, userIndex: number, targetIndex: number, replyToken: string): Promise<void> => {
+const replyBasicAction = async (jinro: jinro_module.Jinro, position: string, userIndex: number, targetIndex: number, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
     await jinro.action.act(userIndex, targetIndex)
@@ -98,7 +98,7 @@ const replyBasicAction = async (jinro: jinro.Jinro, position: string, userIndex:
     return;
 }
 
-const replyDetectiveAction = async (jinro: jinro.Jinro, userIndex: number, targetIndex: number, replyToken: string): Promise<void> => {
+const replyDetectiveAction = async (jinro: jinro_module.Jinro, userIndex: number, targetIndex: number, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
     await jinro.action.act(userIndex, targetIndex);
@@ -117,7 +117,7 @@ const replyDetectiveAction = async (jinro: jinro.Jinro, userIndex: number, targe
     return;
 }
 
-const replyPositionConfirm = async (jinro: jinro.Jinro, userIndex: number, replyToken: string): Promise<void> => {
+const replyPositionConfirm = async (jinro: jinro_module.Jinro, userIndex: number, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
     await jinro.action.updateActionStateTrue(userIndex);
@@ -134,7 +134,7 @@ const replyPositionConfirm = async (jinro: jinro.Jinro, userIndex: number, reply
     return;
 }
 
-const replyActionCompleted = async (jinro: jinro.Jinro): Promise<void> => {
+const replyActionCompleted = async (jinro: jinro_module.Jinro): Promise<void> => {
     const promises: Promise<void>[] = [];
 
     const pushCraziness = await import("./template/pushUserCraziness");
