@@ -11,8 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Jinro = void 0;
 const dabyss = require("dabyss");
-const Craziness_1 = require("./Craziness");
-const crazinessTable = "dabyss-dev-craziness";
+
 /**
  * みんな狂ってるッ！！
  *
