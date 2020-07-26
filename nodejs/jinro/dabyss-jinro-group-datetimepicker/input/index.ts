@@ -1,6 +1,6 @@
 import line = require('@line/bot-sdk');
 import dabyss = require('dabyss');
-import crazynoisy = require('crazynoisy');
+import jinro = require('jinro');
 
 exports.handler = async (event: any, context: any): Promise<void> => {
     const lineEvent: line.PostbackEvent = event.Input.event;
@@ -28,49 +28,49 @@ exports.handler = async (event: any, context: any): Promise<void> => {
         userId = source.userId;
     }
 
-    const crazyNoisy: crazynoisy.CrazyNoisy = await crazynoisy.CrazyNoisy.createInstance(groupId);
-    const status: string = crazyNoisy.gameStatus;
+    const jinro: jinro.Jinro = await jinro.Jinro.createInstance(groupId);
+    const status: string = jinro.gameStatus;
 
     if (status == "setting") {
-        const settingNames = crazyNoisy.settingNames;
-        const settingStatus = crazyNoisy.settingStatus;
+        const settingNames = jinro.settingNames;
+        const settingStatus = jinro.settingStatus;
         for (let i = 0; i < settingNames.length; i++) {
             if (!settingStatus[i]) {
                 if (settingNames[i] == "timer") {
-                    return replyTimerChosen(crazyNoisy, time, replyToken);
+                    return replyTimerChosen(jinro, time, replyToken);
                 }
             }
         }
     }
 }
 
-const replyTimerChosen = async (crazyNoisy: crazynoisy.CrazyNoisy, time: string, replyToken: string): Promise<void> => {
+const replyTimerChosen = async (jinro: jinro.Jinro, time: string, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
-    const settingIndex = await crazyNoisy.getSettingIndex("timer");
+    const settingIndex = await jinro.getSettingIndex("timer");
 
-    promises.push(crazyNoisy.updateTimer(time));
-    await crazyNoisy.updateSettingStateTrue(settingIndex);
+    promises.push(jinro.updateTimer(time));
+    await jinro.updateSettingStateTrue(settingIndex);
 
-    const isSettingCompleted = await crazyNoisy.isSettingCompleted();
+    const isSettingCompleted = await jinro.isSettingCompleted();
     if (!isSettingCompleted) {
     } else {
-        promises.push(replyConfirm(crazyNoisy, replyToken));
+        promises.push(replyConfirm(jinro, replyToken));
     }
 
     await Promise.all(promises);
     return;
 };
 
-const replyConfirm = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken: string): Promise<void> => {
+const replyConfirm = async (jinro: jinro.Jinro, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
-    const userNumber = await crazyNoisy.getUserNumber();
-    const mode = crazyNoisy.gameMode;
-    const type = crazyNoisy.talkType;
-    const timer = await crazyNoisy.getTimerString();
-    const zeroGuru = crazyNoisy.zeroGuru;
-    const zeroDetective = crazyNoisy.zeroDetective;
+    const userNumber = await jinro.getUserNumber();
+    const mode = jinro.gameMode;
+    const type = jinro.talkType;
+    const timer = await jinro.getTimerString();
+    const zeroGuru = jinro.zeroGuru;
+    const zeroDetective = jinro.zeroDetective;
 
     const replyMessage = await import("./template/replyChanged");
     promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(userNumber, mode, type, timer, zeroGuru, zeroDetective)));

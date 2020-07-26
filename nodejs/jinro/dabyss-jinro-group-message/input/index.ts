@@ -1,5 +1,5 @@
 import line = require('@line/bot-sdk');
-import crazynoisy = require('crazynoisy');
+import jinro = require('jinro');
 import dabyss = require('dabyss');
 
 process.on('uncaughtException', function (err) {
@@ -25,30 +25,30 @@ exports.handler = async (event: any, context: any): Promise<void> => {
         groupId = source.roomId; // roomIdもgroupId扱いしよう
     }
 
-    const crazyNoisy: crazynoisy.CrazyNoisy = await crazynoisy.CrazyNoisy.createInstance(groupId);
-    const status: string = crazyNoisy.gameStatus;
+    const jinro: jinro.Jinro = await jinro.Jinro.createInstance(groupId);
+    const status: string = jinro.gameStatus;
 
     if (status == "setting") {
-        const settingNames = crazyNoisy.settingNames;
-        const settingStatus = crazyNoisy.settingStatus;
+        const settingNames = jinro.settingNames;
+        const settingStatus = jinro.settingStatus;
         if (settingStatus == [] || settingStatus == undefined) {
             const group: dabyss.Group = await dabyss.Group.createInstance(groupId);
             if (group.status == "recruit") {
-                return replyRollCallEnd(group, crazyNoisy, replyToken);
+                return replyRollCallEnd(group, jinro, replyToken);
             }
         } else {
-            const isSettingCompleted = await crazyNoisy.isSettingCompleted();
+            const isSettingCompleted = await jinro.isSettingCompleted();
             if (!isSettingCompleted) {
                 for (let i = 0; i < settingNames.length; i++) {
                     if (!settingStatus[i]) {
                         if (settingNames[i] == "mode") {
                             if (text == "ノーマル" || text == "デモ") {
-                                return replyModeChosen(crazyNoisy, text, replyToken);
+                                return replyModeChosen(jinro, text, replyToken);
                             }
                         }
                         if (settingNames[i] == "type") {
                             if ((text == "1" || text == "2") || text == "3") {
-                                await replyTypeChosen(crazyNoisy, text, replyToken);
+                                await replyTypeChosen(jinro, text, replyToken);
                             }
                         }
                         break; // これがないと設定繰り返しちゃう
@@ -58,7 +58,7 @@ exports.handler = async (event: any, context: any): Promise<void> => {
                 let changeSetting: string = "";
                 switch (text) {
                     case "ゲームを開始する":
-                        await replyConfirmYes(crazyNoisy, replyToken);
+                        await replyConfirmYes(jinro, replyToken);
                         break;
                     case "モード変更":
                         changeSetting = "mode";
@@ -77,19 +77,19 @@ exports.handler = async (event: any, context: any): Promise<void> => {
                         break;
                 }
                 if (changeSetting != "") {
-                    await replySettingChange(crazyNoisy, changeSetting, replyToken);
+                    await replySettingChange(jinro, changeSetting, replyToken);
                 }
             }
         }
     } else if (text == "役職人数確認") {
-        // await replyPositionNumber(crazyNoisy, replyToken);
+        // await replyPositionNumber(jinro, replyToken);
     }
 
     if (status == "discuss") {
         // 話し合い中だった場合
 
         if (text == "終了") {
-            await replyDiscussFinish(crazyNoisy, replyToken);
+            await replyDiscussFinish(jinro, replyToken);
         }
 
     }
@@ -97,18 +97,18 @@ exports.handler = async (event: any, context: any): Promise<void> => {
     if (status == "winner") {
         // すべての結果発表がまだなら
         if (text == "役職・狂気を見る") {
-            await replyAnnounceResult(crazyNoisy, replyToken);
+            await replyAnnounceResult(jinro, replyToken);
         }
     }
 }
 
-const replyRollCallEnd = async (group: dabyss.Group, crazyNoisy: crazynoisy.CrazyNoisy, replyToken: string): Promise<void> => {
+const replyRollCallEnd = async (group: dabyss.Group, jinro: jinro.Jinro, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
-    const displayNames: string[] = await crazyNoisy.getDisplayNames(); // 参加者の表示名リスト
+    const displayNames: string[] = await jinro.getDisplayNames(); // 参加者の表示名リスト
 
     // DB変更操作１
-    promises.push(crazyNoisy.updateDefaultSettingStatus());
+    promises.push(jinro.updateDefaultSettingStatus());
     promises.push(group.updateStatus("play")); // 参加者リストをプレイ中にして、募集中を解除する
 
     const replyMessage = await import("./template/replyRollCallEnd");
@@ -118,81 +118,81 @@ const replyRollCallEnd = async (group: dabyss.Group, crazyNoisy: crazynoisy.Craz
     return;
 };
 
-const replyModeChosen = async (crazyNoisy: crazynoisy.CrazyNoisy, text: string, replyToken: string): Promise<void> => {
+const replyModeChosen = async (jinro: jinro.Jinro, text: string, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
-    promises.push(crazyNoisy.updateGameMode(text));
-    await crazyNoisy.updateSettingState("mode", true);
+    promises.push(jinro.updateGameMode(text));
+    await jinro.updateSettingState("mode", true);
 
-    const isSettingCompleted: boolean = await crazyNoisy.isSettingCompleted();
+    const isSettingCompleted: boolean = await jinro.isSettingCompleted();
     if (!isSettingCompleted) {
         const replyMessage = await import("./template/replyModeChosen");
         promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(text)));
     } else {
-        promises.push(replyConfirm(crazyNoisy, replyToken));
+        promises.push(replyConfirm(jinro, replyToken));
     }
 
     await Promise.all(promises);
     return;
 };
 
-const replyTypeChosen = async (crazyNoisy: crazynoisy.CrazyNoisy, text: string, replyToken: string): Promise<void> => {
+const replyTypeChosen = async (jinro: jinro.Jinro, text: string, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
-    promises.push(crazyNoisy.updateTalkType(Number(text)));
-    await crazyNoisy.updateSettingState("type", true);
+    promises.push(jinro.updateTalkType(Number(text)));
+    await jinro.updateSettingState("type", true);
 
-    const isSettingCompleted: boolean = await crazyNoisy.isSettingCompleted();
+    const isSettingCompleted: boolean = await jinro.isSettingCompleted();
     if (!isSettingCompleted) {
 
     } else {
-        promises.push(replyConfirm(crazyNoisy, replyToken));
+        promises.push(replyConfirm(jinro, replyToken));
     }
 
     await Promise.all(promises);
     return;
 };
 
-const replySettingChange = async (crazyNoisy: crazynoisy.CrazyNoisy, setting: string, replyToken: string): Promise<void> => {
+const replySettingChange = async (jinro: jinro.Jinro, setting: string, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
     if (setting == "mode") {
-        promises.push(crazyNoisy.updateSettingState(setting, false)); // 設定状態をfalseに
+        promises.push(jinro.updateSettingState(setting, false)); // 設定状態をfalseに
         const replyMessage = await import("./template/replyModeChange");
         promises.push(dabyss.replyMessage(replyToken, await replyMessage.main()));
     }
     if (setting == "type") {
-        promises.push(crazyNoisy.updateSettingState(setting, false)); // 設定状態をfalseに
+        promises.push(jinro.updateSettingState(setting, false)); // 設定状態をfalseに
         const replyMessage = await import("./template/replyTypeChange");
         promises.push(dabyss.replyMessage(replyToken, await replyMessage.main()));
     }
     if (setting == "timer") {
-        promises.push(crazyNoisy.updateSettingState(setting, false)); // 設定状態をfalseに
+        promises.push(jinro.updateSettingState(setting, false)); // 設定状態をfalseに
         const replyMessage = await import("./template/replyTimerChange");
         promises.push(dabyss.replyMessage(replyToken, await replyMessage.main()));
     }
     if (setting == "zeroGuru") {
-        await crazyNoisy.switchZeroGuru();
-        promises.push(replyConfirm(crazyNoisy, replyToken));
+        await jinro.switchZeroGuru();
+        promises.push(replyConfirm(jinro, replyToken));
     }
     if (setting == "zeroDetective") {
-        await crazyNoisy.switchZeroDetective();
-        promises.push(replyConfirm(crazyNoisy, replyToken));
+        await jinro.switchZeroDetective();
+        promises.push(replyConfirm(jinro, replyToken));
     }
 
     await Promise.all(promises);
     return;
 };
 
-const replyConfirm = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken: string): Promise<void> => {
+const replyConfirm = async (jinro: jinro.Jinro, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
-    const userNumber = await crazyNoisy.getUserNumber();
-    const mode = crazyNoisy.gameMode;
-    const type = crazyNoisy.talkType;
-    const timer = await crazyNoisy.getTimerString();
-    const zeroGuru = crazyNoisy.zeroGuru;
-    const zeroDetective = crazyNoisy.zeroDetective;
+    const userNumber = await jinro.getUserNumber();
+    const mode = jinro.gameMode;
+    const type = jinro.talkType;
+    const timer = await jinro.getTimerString();
+    const zeroGuru = jinro.zeroGuru;
+    const zeroDetective = jinro.zeroDetective;
 
     const replyMessage = await import("./template/replyChanged");
     promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(userNumber, mode, type, timer, zeroGuru, zeroDetective)));
@@ -201,34 +201,34 @@ const replyConfirm = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken: strin
     return;
 }
 
-const replyConfirmYes = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken: string): Promise<void> => {
+const replyConfirmYes = async (jinro: jinro.Jinro, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
-    promises.push(crazyNoisy.updateGameStatus("action"));
+    promises.push(jinro.updateGameStatus("action"));
 
-    await crazyNoisy.updatePositions();
-    const mode = crazyNoisy.gameMode;
+    await jinro.updatePositions();
+    const mode = jinro.gameMode;
 
     if (mode != "デモ") {
-        promises.push(crazyNoisy.updateDefaultCrazinessIds());
+        promises.push(jinro.updateDefaultCrazinessIds());
     } else {
-        promises.push(crazyNoisy.updateDefaultCrazinessIdsInDemo());
+        promises.push(jinro.updateDefaultCrazinessIdsInDemo());
     }
-    promises.push(crazyNoisy.updateDefaultBrainwashStatus()); // 洗脳ステータスを初期配置
-    promises.push(crazyNoisy.updateDefaultPositionConfirmStatus()); // 役職確認ステータスを全員false
+    promises.push(jinro.updateDefaultBrainwashStatus()); // 洗脳ステータスを初期配置
+    promises.push(jinro.updateDefaultPositionConfirmStatus()); // 役職確認ステータスを全員false
 
-    const userIds = crazyNoisy.userIds;
-    const displayNames = await crazyNoisy.getDisplayNames();
-    const positions = crazyNoisy.positions;
-    const userNumber = await crazyNoisy.getUserNumber();
-    const zeroGuru = crazyNoisy.zeroGuru;
-    const zeroDetective = crazyNoisy.zeroDetective;
+    const userIds = jinro.userIds;
+    const displayNames = await jinro.getDisplayNames();
+    const positions = jinro.positions;
+    const userNumber = await jinro.getUserNumber();
+    const zeroGuru = jinro.zeroGuru;
+    const zeroDetective = jinro.zeroDetective;
 
-    promises.push(crazyNoisy.putZeroAction());
+    promises.push(jinro.putZeroAction());
 
     for (let i = 0; i < userNumber; i++) {
-        const targetDisplayNames = await crazyNoisy.getDisplayNamesExceptOneself(i);
-        const targetUserIndexes = await crazyNoisy.getUserIndexesExceptOneself(i);
+        const targetDisplayNames = await jinro.getDisplayNamesExceptOneself(i);
+        const targetUserIndexes = await jinro.getUserIndexesExceptOneself(i);
 
         const pushPosition = await import("./template/pushUserPosition");
         promises.push(dabyss.pushMessage(userIds[i], await pushPosition.main(displayNames[i], positions[i], targetDisplayNames, targetUserIndexes, zeroGuru, zeroDetective)));
@@ -243,22 +243,22 @@ const replyConfirmYes = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken: st
     return;
 };
 
-const replyDiscussFinish = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken: string): Promise<void> => {
+const replyDiscussFinish = async (jinro: jinro.Jinro, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
     // DB変更操作１，２
     // 投票データを挿入出来たら話し合い終了ステータスをtrueにする同期処理
-    promises.push(crazyNoisy.putFirstVote());
-    promises.push(crazyNoisy.updateGameStatus("vote"));
+    promises.push(jinro.putFirstVote());
+    promises.push(jinro.updateGameStatus("vote"));
 
-    const userNumber: number = await crazyNoisy.getUserNumber();
+    const userNumber: number = await jinro.getUserNumber();
     const shuffleUserIndexes: number[] = await dabyss.makeShuffuleNumberArray(userNumber);
 
     let displayNames: string[] = [];
 
     // 公平にするため投票用の順番はランダムにする
     for (let i = 0; i < userNumber; i++) {
-        displayNames[i] = await crazyNoisy.getDisplayName(shuffleUserIndexes[i]);
+        displayNames[i] = await jinro.getDisplayName(shuffleUserIndexes[i]);
     }
 
     //if (usePostback) { // postbackを使う設定の場合
@@ -269,24 +269,24 @@ const replyDiscussFinish = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken:
     return;
 };
 
-const replyAnnounceResult = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken: string): Promise<void> => {
+const replyAnnounceResult = async (jinro: jinro.Jinro, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
-    promises.push(crazyNoisy.updateGameStatus("result"));
-    const group: dabyss.Group = await dabyss.Group.createInstance(crazyNoisy.groupId);
+    promises.push(jinro.updateGameStatus("result"));
+    const group: dabyss.Group = await dabyss.Group.createInstance(jinro.groupId);
     promises.push(group.finishGroup());
 
-    const userNumber = await crazyNoisy.getUserNumber();
-    const displayNames = await crazyNoisy.getDisplayNames();
-    const positions = crazyNoisy.positions;
-    const crazinessIds = crazyNoisy.crazinessIds;
+    const userNumber = await jinro.getUserNumber();
+    const displayNames = await jinro.getDisplayNames();
+    const positions = jinro.positions;
+    const crazinessIds = jinro.crazinessIds;
 
     let contentsList: string[][] = []
     for (let i = 0; i < userNumber; i++) {
         let contents: string[] = [];
         if (crazinessIds[i][0] != null) {
             for (let crazinessId of crazinessIds[i]) {
-                const craziness = await crazynoisy.Craziness.createInstance(crazinessId);
+                const craziness = await jinro.Craziness.createInstance(crazinessId);
                 const content = craziness.content;
                 contents.push(content);
             }

@@ -1,6 +1,6 @@
 import line = require('@line/bot-sdk');
 import dabyss = require('dabyss');
-import crazynoisy = require('crazynoisy');
+import jinro = require('jinro');
 
 process.on('uncaughtException', function (err) {
     console.log(err);
@@ -27,54 +27,54 @@ exports.handler = async (event: any, context: any): Promise<void> => {
         userId = source.userId;
     }
 
-    const crazyNoisy: crazynoisy.CrazyNoisy = await crazynoisy.CrazyNoisy.createInstance(groupId);
-    const status: string = crazyNoisy.gameStatus;
+    const jinro: jinro.Jinro = await jinro.jinro.createInstance(groupId);
+    const status: string = jinro.gameStatus;
 
-    if (status == "action" && crazyNoisy.day == 0) {
-        await crazyNoisy.setAction();
+    if (status == "action" && jinro.day == 0) {
+        await jinro.setAction();
         if (postbackData == "確認状況") {
-            await replyConfirmStatus(crazyNoisy, replyToken);
+            await replyConfirmStatus(jinro, replyToken);
         }
     }
 
     if (status == "discuss") {
-        await crazyNoisy.setDiscussion();
+        await jinro.setDiscussion();
         if (postbackData == "残り時間") {
-            return replyRemainingTime(crazyNoisy, replyToken);
+            return replyRemainingTime(jinro, replyToken);
         }
     }
 
     if (status == "vote") {
-        await crazyNoisy.setVote();
+        await jinro.setVote();
 
-        const userIndex: number = await crazyNoisy.getUserIndexFromUserId(userId);
-        const voteState: boolean = await crazyNoisy.vote.isVotedUser(userIndex);
+        const userIndex: number = await jinro.getUserIndexFromUserId(userId);
+        const voteState: boolean = await jinro.vote.isVotedUser(userIndex);
         if (!voteState) {
             // postbackした参加者の投票がまだの場合
 
             const votedUserIndex: number = Number(postbackData);
-            const isUserCandidate: boolean = await crazyNoisy.vote.isUserCandidate(votedUserIndex);
+            const isUserCandidate: boolean = await jinro.vote.isUserCandidate(votedUserIndex);
             if (isUserCandidate) {
                 // postbackのデータが候補者のインデックスだった場合
 
                 // ※
                 if (userIndex != votedUserIndex) {
                     // 自分以外に投票していた場合
-                    return replyVoteSuccess(crazyNoisy, votedUserIndex, userIndex, replyToken);
+                    return replyVoteSuccess(jinro, votedUserIndex, userIndex, replyToken);
                 } else {
                     // 自分に投票していた場合
-                    return replySelfVote(crazyNoisy, userIndex, replyToken);
+                    return replySelfVote(jinro, userIndex, replyToken);
                 }
             }
         } else {
-            return replyDuplicateVote(crazyNoisy, userIndex, replyToken);
+            return replyDuplicateVote(jinro, userIndex, replyToken);
         }
     }
 }
 
-const replyConfirmStatus = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken: string): Promise<void> => {
-    const displayNames = await crazyNoisy.getDisplayNames();
-    const confirmStatus = crazyNoisy.action.actionStatus;
+const replyConfirmStatus = async (jinro: jinro.Jinro, replyToken: string): Promise<void> => {
+    const displayNames = await jinro.getDisplayNames();
+    const confirmStatus = jinro.action.actionStatus;
     let unconfirmed = [];
     for (let i = 0; i < displayNames.length; i++) {
         if (!confirmStatus[i]) {
@@ -86,60 +86,60 @@ const replyConfirmStatus = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken:
     await dabyss.replyMessage(replyToken, await replyMessage.main(unconfirmed));
 }
 
-const replyRemainingTime = async (crazyNoisy: crazynoisy.CrazyNoisy, replyToken: string): Promise<void> => {
-    const remainingTime = await crazyNoisy.discussion.getRemainingTime();
+const replyRemainingTime = async (jinro: jinro.Jinro, replyToken: string): Promise<void> => {
+    const remainingTime = await jinro.discussion.getRemainingTime();
 
     const replyMessage = await import("./template/replyRemainingTime");
     await dabyss.replyMessage(replyToken, await replyMessage.main(remainingTime));
 };
 
-const replyVoteSuccess = async (crazyNoisy: crazynoisy.CrazyNoisy, votedUserIndex: number, userIndex: number, replyToken: string): Promise<void> => {
+const replyVoteSuccess = async (jinro: jinro.Jinro, votedUserIndex: number, userIndex: number, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
-    const voterDisplayName = await crazyNoisy.getDisplayName(userIndex);
+    const voterDisplayName = await jinro.getDisplayName(userIndex);
 
-    await crazyNoisy.vote.vote(userIndex, votedUserIndex);
+    await jinro.vote.vote(userIndex, votedUserIndex);
 
     let replyMessage: line.Message[] = []
 
     const replyVoteSuccess = await import("./template/replyVoteSuccess");
     replyMessage = replyMessage.concat(await replyVoteSuccess.main(voterDisplayName));
 
-    const isVoteCompleted: boolean = await crazyNoisy.vote.isVoteCompleted();
+    const isVoteCompleted: boolean = await jinro.vote.isVoteCompleted();
     if (isVoteCompleted) {
 
-        const displayNames = await crazyNoisy.getDisplayNames();
+        const displayNames = await jinro.getDisplayNames();
 
-        const multipleMostVotedUserExists = await crazyNoisy.vote.multipleMostPolledUserExists();
+        const multipleMostVotedUserExists = await jinro.vote.multipleMostPolledUserExists();
         if (!multipleMostVotedUserExists) { // 最多得票者が一人だった場合
 
-            const mostVotedUserIndex = await crazyNoisy.vote.getMostPolledUserIndex(); // 最多得票者
-            const executorDisplayName = await crazyNoisy.getDisplayName(mostVotedUserIndex);
+            const mostVotedUserIndex = await jinro.vote.getMostPolledUserIndex(); // 最多得票者
+            const executorDisplayName = await jinro.getDisplayName(mostVotedUserIndex);
 
             const replyExecutor = await import("./template/replyExecutor");
             const replyExecutorMessage = await replyExecutor.main(executorDisplayName);
             replyMessage = replyMessage.concat(replyExecutorMessage);
 
-            const isGuru = await crazyNoisy.isGuru(mostVotedUserIndex); // 最多得票者が教祖かどうか
+            const isGuru = await jinro.isGuru(mostVotedUserIndex); // 最多得票者が教祖かどうか
 
             if (!isGuru) { // 最多得票者が教祖じゃなかった場合
-                replyMessage = replyMessage.concat(await replyExecutorIsNotGuru(crazyNoisy, executorDisplayName, mostVotedUserIndex));
+                replyMessage = replyMessage.concat(await replyExecutorIsNotGuru(jinro, executorDisplayName, mostVotedUserIndex));
 
-                const isBrainwashCompleted = await crazyNoisy.isBrainwashCompleted();
+                const isBrainwashCompleted = await jinro.isBrainwashCompleted();
                 if (!isBrainwashCompleted) {
 
-                    replyMessage = replyMessage.concat(await replyVoteFinish(crazyNoisy));
+                    replyMessage = replyMessage.concat(await replyVoteFinish(jinro));
 
                 } else { // 洗脳が完了したら
-                    replyMessage = replyMessage.concat(await replyBrainwashCompleted(crazyNoisy));
+                    replyMessage = replyMessage.concat(await replyBrainwashCompleted(jinro));
                 }
             } else { // 最多得票者が教祖だった場合
-                replyMessage = replyMessage.concat(await replyCitizenWin(crazyNoisy));
+                replyMessage = replyMessage.concat(await replyCitizenWin(jinro));
             }
 
         } else { // 最多得票者が複数いた場合
-            const mostVotedUserIndexes = await crazyNoisy.vote.getMostPolledUserIndexes(); // 最多得票者の配列
-            const isRevoting = (crazyNoisy.vote.count > 1);
+            const mostVotedUserIndexes = await jinro.vote.getMostPolledUserIndexes(); // 最多得票者の配列
+            const isRevoting = (jinro.vote.count > 1);
             if (!isRevoting) { // 一回目の投票の場合
 
                 const replyRevote = await import("./template/replyRevote");
@@ -148,30 +148,30 @@ const replyVoteSuccess = async (crazyNoisy: crazynoisy.CrazyNoisy, votedUserInde
 
                 // DB変更操作３’，４’
                 // 再投票データを作成したら、投票データを初期化する同期処理
-                promises.push(crazyNoisy.putRevote());
+                promises.push(jinro.putRevote());
             } else { // 再投票中だった場合
 
-                const executorIndex = await crazyNoisy.vote.chooseExecutorRandomly(); // 処刑者をランダムで決定
-                const executorDisplayName = await crazyNoisy.getDisplayName(executorIndex);
+                const executorIndex = await jinro.vote.chooseExecutorRandomly(); // 処刑者をランダムで決定
+                const executorDisplayName = await jinro.getDisplayName(executorIndex);
 
                 const replyExecutorInRevote = await import("./template/replyExecutorInRevote");
                 const replyExecutorInRevoteMessage = await replyExecutorInRevote.main(executorDisplayName);
                 replyMessage = replyMessage.concat(replyExecutorInRevoteMessage);
 
-                const isGuru = await crazyNoisy.isGuru(executorIndex); // 最多得票者が教祖かどうか
+                const isGuru = await jinro.isGuru(executorIndex); // 最多得票者が教祖かどうか
                 if (!isGuru) { // 最多得票者が教祖じゃなかった場合
-                    replyMessage = replyMessage.concat(await replyExecutorIsNotGuru(crazyNoisy, executorDisplayName, executorIndex));
+                    replyMessage = replyMessage.concat(await replyExecutorIsNotGuru(jinro, executorDisplayName, executorIndex));
 
-                    const isBrainwashCompleted = await crazyNoisy.isBrainwashCompleted();
+                    const isBrainwashCompleted = await jinro.isBrainwashCompleted();
                     if (!isBrainwashCompleted) {
 
-                        replyMessage = replyMessage.concat(await replyVoteFinish(crazyNoisy));
+                        replyMessage = replyMessage.concat(await replyVoteFinish(jinro));
 
                     } else { // 洗脳が完了したら
-                        replyMessage = replyMessage.concat(await replyBrainwashCompleted(crazyNoisy));
+                        replyMessage = replyMessage.concat(await replyBrainwashCompleted(jinro));
                     }
                 } else { // 最多得票者が教祖だった場合
-                    replyMessage = replyMessage.concat(await replyCitizenWin(crazyNoisy));
+                    replyMessage = replyMessage.concat(await replyCitizenWin(jinro));
                 }
             }
 
@@ -182,10 +182,10 @@ const replyVoteSuccess = async (crazyNoisy: crazynoisy.CrazyNoisy, votedUserInde
     return;
 }
 
-const replyExecutorIsNotGuru = async (crazyNoisy: crazynoisy.CrazyNoisy, executorDisplayName: string, executorIndex: number): Promise<line.Message[]> => {
+const replyExecutorIsNotGuru = async (jinro: jinro.Jinro, executorDisplayName: string, executorIndex: number): Promise<line.Message[]> => {
     const promises: Promise<void>[] = [];
-    await crazyNoisy.updateBrainwashStateTrue(executorIndex); // 最多投票者洗脳
-    promises.push(crazyNoisy.addCrazinessId(executorIndex)); // 最多投票者狂気追加
+    await jinro.updateBrainwashStateTrue(executorIndex); // 最多投票者洗脳
+    promises.push(jinro.addCrazinessId(executorIndex)); // 最多投票者狂気追加
     const replyExecutorIsNotGuru = await import("./template/replyExecutorIsNotGuru");
     const replyExecutorIsNotGuruMessage = await replyExecutorIsNotGuru.main(executorDisplayName);
 
@@ -193,46 +193,46 @@ const replyExecutorIsNotGuru = async (crazyNoisy: crazynoisy.CrazyNoisy, executo
     return replyExecutorIsNotGuruMessage;
 }
 
-const replyVoteFinish = async (crazyNoisy: crazynoisy.CrazyNoisy): Promise<line.Message[]> => {
+const replyVoteFinish = async (jinro: jinro.Jinro): Promise<line.Message[]> => {
     const promises: Promise<void>[] = [];
 
-    promises.push(crazyNoisy.updateGameStatus("action")); // ステータスをアクション中に
+    promises.push(jinro.updateGameStatus("action")); // ステータスをアクション中に
 
-    const displayNames = await crazyNoisy.getDisplayNames();
-    promises.push(crazyNoisy.setAction());
-    for (let i = 0; i < crazyNoisy.userIds.length; i++) {
-        const targetDisplayNames = await crazyNoisy.getDisplayNamesExceptOneself(i);
-        const targetIndexes = await crazyNoisy.getUserIndexesExceptOneself(i);
+    const displayNames = await jinro.getDisplayNames();
+    promises.push(jinro.setAction());
+    for (let i = 0; i < jinro.userIds.length; i++) {
+        const targetDisplayNames = await jinro.getDisplayNamesExceptOneself(i);
+        const targetIndexes = await jinro.getUserIndexesExceptOneself(i);
 
-        const isBrainwash = await crazyNoisy.isBrainwash(i);
+        const isBrainwash = await jinro.isBrainwash(i);
 
         const pushUserAction = await import("./template/pushUserAction");
-        promises.push(dabyss.pushMessage(crazyNoisy.userIds[i], await pushUserAction.main(displayNames[i], crazyNoisy.positions[i], isBrainwash, targetDisplayNames, targetIndexes)));
+        promises.push(dabyss.pushMessage(jinro.userIds[i], await pushUserAction.main(displayNames[i], jinro.positions[i], isBrainwash, targetDisplayNames, targetIndexes)));
     }
 
     const replyVoteFinish = await import("./template/replyVoteFinish");
-    const replyVoteFinishMessage = await replyVoteFinish.main(crazyNoisy.day);
+    const replyVoteFinishMessage = await replyVoteFinish.main(jinro.day);
 
     return replyVoteFinishMessage;
 }
 
-const replyBrainwashCompleted = async (crazyNoisy: crazynoisy.CrazyNoisy): Promise<line.Message[]> => {
-    await crazyNoisy.updateGameStatus("winner");
-    await crazyNoisy.updateWinner("guru");
-    const winnerIndexes = await crazyNoisy.getWinnerIndexes();
+const replyBrainwashCompleted = async (jinro: jinro.Jinro): Promise<line.Message[]> => {
+    await jinro.updateGameStatus("winner");
+    await jinro.updateWinner("guru");
+    const winnerIndexes = await jinro.getWinnerIndexes();
 
-    const displayNames = await crazyNoisy.getDisplayNames();
+    const displayNames = await jinro.getDisplayNames();
     const replyWinner = await import("./template/replyWinner");
     const replyWinnerMessage = await replyWinner.main(displayNames, true, winnerIndexes);
     return replyWinnerMessage;
 }
 
 
-const replyCitizenWin = async (crazyNoisy: crazynoisy.CrazyNoisy): Promise<line.Message[]> => {
-    await crazyNoisy.updateGameStatus("winner"); // 勝者発表状況をtrueにする
-    const winnerIndexes = await crazyNoisy.getWinnerIndexes();
+const replyCitizenWin = async (jinro: jinro.Jinro): Promise<line.Message[]> => {
+    await jinro.updateGameStatus("winner"); // 勝者発表状況をtrueにする
+    const winnerIndexes = await jinro.getWinnerIndexes();
 
-    const displayNames = await crazyNoisy.getDisplayNames();
+    const displayNames = await jinro.getDisplayNames();
     const replyWinner = await import("./template/replyWinner");
     const replyWinnerMessage = await replyWinner.main(displayNames, false, winnerIndexes);
 
@@ -240,14 +240,14 @@ const replyCitizenWin = async (crazyNoisy: crazynoisy.CrazyNoisy): Promise<line.
 
 }
 
-const replySelfVote = async (crazyNoisy: crazynoisy.CrazyNoisy, userIndex: number, replyToken: string): Promise<void> => {
-    const displayName = await crazyNoisy.getDisplayName(userIndex);
+const replySelfVote = async (jinro: jinro.Jinro, userIndex: number, replyToken: string): Promise<void> => {
+    const displayName = await jinro.getDisplayName(userIndex);
     const replyMessage = await import("./template/replySelfVote");
     await dabyss.replyMessage(replyToken, await replyMessage.main(displayName));
 };
 
-const replyDuplicateVote = async (crazyNoisy: crazynoisy.CrazyNoisy, userIndex: number, replyToken: string): Promise<void> => {
-    const displayName = await crazyNoisy.getDisplayName(userIndex);
+const replyDuplicateVote = async (jinro: jinro.Jinro, userIndex: number, replyToken: string): Promise<void> => {
+    const displayName = await jinro.getDisplayName(userIndex);
     const replyMessage = await import("./template/replyDuplicateVote");
     await dabyss.replyMessage(replyToken, await replyMessage.main(displayName));
 };
