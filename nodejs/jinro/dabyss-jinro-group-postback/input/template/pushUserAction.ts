@@ -27,9 +27,9 @@ export const main = async (displayName: string, position: string, isBrainwash: b
             }
         } else {
             if (isBrainwash) {
-                actionMessage = "狂っているため調査できません";
+                actionMessage = "死んでいるため占えません";
             } else {
-                actionMessage = "調査する人を選んでください";
+                actionMessage = "占う人を選んでください";
                 for (let i = 0; i < targetDisplayNames.length; i++) {
                     const targetMessage: line.FlexButton = {
                         "type": "button",

@@ -13,7 +13,7 @@ export const main = async (displayName: string, isGuru: boolean): Promise<line.M
     return [
         {
             type: "text",
-            text: `調査の結果、${displayName}さんは${message}`
+            text: `占いの結果、${displayName}さんは${message}`
         }
     ]
 }

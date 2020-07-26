@@ -69,10 +69,10 @@ exports.handler = async (event: any, context: any): Promise<void> => {
                     case "議論時間変更":
                         changeSetting = "timer";
                         break;
-                    case "0日目洗脳有無":
+                    case "0日目襲撃有無":
                         changeSetting = "zeroGuru";
                         break;
-                    case "0日目調査有無":
+                    case "0日目占い有無":
                         changeSetting = "zeroDetective";
                         break;
                 }

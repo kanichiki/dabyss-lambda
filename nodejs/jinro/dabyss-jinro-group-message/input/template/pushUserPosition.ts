@@ -27,7 +27,7 @@ export const main = async (displayName: string, position: string, targetDisplayN
         }
     } else if (position == crazynoisy.detective && zeroDetective) {
 
-        actionMessage = "調査する人を選んでください";
+        actionMessage = "占う人を選んでください";
         for (let i = 0; i < targetDisplayNames.length; i++) {
             const targetMessage: line.FlexButton = {
                 "type": "button",
