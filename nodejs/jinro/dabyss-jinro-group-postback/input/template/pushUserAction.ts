@@ -1,6 +1,6 @@
 import line = require('@line/bot-sdk');
 import dabyss = require('dabyss');
-import crazynoisy = require('crazynoisy');
+import jinro_module = require('jinro');
 
 export const main = async (displayName: string, position: string, isBrainwash: boolean, targetDisplayNames: string[], targetUserIndexes: number[]): Promise<line.Message[]> => {
     let actionMessage = "";
@@ -10,8 +10,8 @@ export const main = async (displayName: string, position: string, isBrainwash: b
         }
     ]
 
-    if (position == crazynoisy.guru || position == crazynoisy.detective) {
-        if (position == crazynoisy.guru) {
+    if (position == jinro_module.guru || position == jinro_module.detective) {
+        if (position == jinro_module.guru) {
             actionMessage = "噛む人を選んでください";
             for (let i = 0; i < targetDisplayNames.length; i++) {
                 const targetMessage: line.FlexButton = {

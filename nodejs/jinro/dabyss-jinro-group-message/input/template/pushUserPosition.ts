@@ -1,6 +1,6 @@
 import line = require('@line/bot-sdk');
 import dabyss = require('dabyss');
-import crazynoisy = require('crazynoisy');
+import jinro_module = require('jinro');
 
 export const main = async (displayName: string, position: string, targetDisplayNames: string[], targetUserIndexes: number[], zeroGuru: boolean, zeroDetective: boolean): Promise<line.Message[]> => {
     let actionMessage: string = "";
@@ -10,7 +10,7 @@ export const main = async (displayName: string, position: string, targetDisplayN
         }
     ]
 
-    if (position == crazynoisy.guru && zeroGuru) {
+    if (position == jinro_module.guru && zeroGuru) {
 
         actionMessage = "噛む人を選んでください";
         for (let i = 0; i < targetDisplayNames.length; i++) {
@@ -25,7 +25,7 @@ export const main = async (displayName: string, position: string, targetDisplayN
             }
             targetMessages.push(targetMessage);
         }
-    } else if (position == crazynoisy.detective && zeroDetective) {
+    } else if (position == jinro_module.detective && zeroDetective) {
 
         actionMessage = "占う人を選んでください";
         for (let i = 0; i < targetDisplayNames.length; i++) {

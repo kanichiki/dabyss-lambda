@@ -1,6 +1,6 @@
 import line = require('@line/bot-sdk');
 import dabyss = require('dabyss');
-import crazynoisy = require('crazynoisy');
+import jinro_module = require('jinro');
 
 export const main = async (): Promise<line.Message[]> => {
 
@@ -8,7 +8,7 @@ export const main = async (): Promise<line.Message[]> => {
     {
       "type": "flex",
       "altText": "モード",
-      "contents": crazynoisy.modeOptions
+      "contents": jinro_module.modeOptions
     }
 
   ]

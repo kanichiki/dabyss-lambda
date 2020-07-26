@@ -1,6 +1,4 @@
 import line = require('@line/bot-sdk');
-import dabyss = require('dabyss');
-import crazynoisy = require('crazynoisy');
 
 export const main = async (unconfirmed: string[]): Promise<line.Message[]> => {
 
