@@ -1,6 +1,6 @@
 import line = require('@line/bot-sdk');
 import dabyss = require('dabyss');
-import jinro_module = require('jinro_module');
+import jinro_module = require('jinro');
 
 export const main = async (userNumber: number, mode: string, type: number, timer: string, zeroGuru: boolean, zeroDetective: boolean): Promise<line.Message[]> => {
   return [
