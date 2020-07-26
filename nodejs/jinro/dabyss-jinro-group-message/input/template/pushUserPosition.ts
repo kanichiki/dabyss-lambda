@@ -12,7 +12,7 @@ export const main = async (displayName: string, position: string, targetDisplayN
 
     if (position == crazynoisy.guru && zeroGuru) {
 
-        actionMessage = "洗脳する人を選んでください";
+        actionMessage = "噛む人を選んでください";
         for (let i = 0; i < targetDisplayNames.length; i++) {
             const targetMessage: line.FlexButton = {
                 "type": "button",
