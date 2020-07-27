@@ -1,10 +1,10 @@
 import line = require('@line/bot-sdk');
-export declare const guru = "\u6559\u7956";
+export declare const werewolf = "\u6559\u7956";
 export declare const fanatic = "\u72C2\u4FE1\u8005";
 export declare const detective = "\u63A2\u5075";
 export declare const citizen = "\u5E02\u6C11";
 export declare const typeOptions: line.FlexBubble;
 export declare const modeOptions: line.FlexBubble;
-export declare const settingConfirmMessage: (userNumber: number, mode: string, type: number, timer: string, zeroGuru: boolean, zeroDetective: boolean) => Promise<line.FlexBubble>;
+export declare const settingConfirmMessage: (userNumber: number, mode: string, type: number, timer: string, zeroWerewolf: boolean, zeroDetective: boolean) => Promise<line.FlexBubble>;
 export declare const timerMessage: () => Promise<line.FlexBubble>;
 export declare const positionNumberMessage: (userNumber: number, numberOption: number) => Promise<line.FlexBubble>;
