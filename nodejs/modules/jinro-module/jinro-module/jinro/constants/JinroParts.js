@@ -321,17 +321,17 @@ exports.timerMessage = () => __awaiter(void 0, void 0, void 0, function* () {
         }
     };
 });
-exports.positionNumberMessage = (userNumber, numberOption) => __awaiter(void 0, void 0, void 0, function* () {
-    let forecasterNumber = "";
+
+exports.positionNumberMessage = (
+    userNumber,
+    werewolfNumber,
+    forecasterNumber,
+    psychicNumber,
+    hunterNumber,
+    madmanNumber,
+    ) => __awaiter(void 0, void 0, void 0, function* () {
     let citizenNumber = "";
-    if (userNumber > 6) {
-        forecasterNumber = "1";
-        citizenNumber = `${userNumber - numberOption - 2}~${userNumber - numberOption - 1}`;
-    }
-    else {
-        forecasterNumber = `0~1`;
-        citizenNumber = `${userNumber - numberOption * 2 - 1}~${userNumber - numberOption * 2 + 1}`;
-    }
+    citizenNumber = userNumber - (werewolfNumber + forecasterNumber + psychicNumber + hunterNumber + madmanNumber)
     return {
         "type": "bubble",
         "body": {
@@ -350,16 +350,24 @@ exports.positionNumberMessage = (userNumber, numberOption) => __awaiter(void 0, 
                 },
                 {
                     "type": "text",
-                    "text": "人狼 : 1人",
+                    "text":  `人狼 : ${werewolfNumber}人`,
                     "margin": "md"
                 },
                 {
                     "type": "text",
-                    "text": `狂人 : ${numberOption - 1}~${numberOption}人`
+                    "text": `狂人 : ${madmanNumber}人`
                 },
                 {
                     "type": "text",
                     "text": `占い師 : ${forecasterNumber}人`
+                },
+                {
+                    "type": "text",
+                    "text": `霊媒師 : ${psychicNumber}人`
+                },
+                {
+                    "type": "text",
+                    "text": `狩人 : ${hunterNumber}人`
                 },
                 {
                     "type": "text",
