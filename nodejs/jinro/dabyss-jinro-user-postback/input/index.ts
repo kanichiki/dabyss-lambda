@@ -35,10 +35,10 @@ exports.handler = async (event: any, context: any): Promise<void> => {
             const confirmsState: boolean = await jinro.action.isActedUser(userIndex);
             if (!confirmsState) {
                 const position: string = await jinro.getPosition(userIndex);
-                const zeroGuru: boolean = jinro.zeroGuru;
+                const zeroWerewolf: boolean = jinro.zeroWerewolf;
                 const zeroDetective: boolean = jinro.zeroDetective;
 
-                if (position == jinro.positionNames.guru && zeroGuru) {
+                if (position == jinro.positionNames.werewolf && zeroWerewolf) {
                     const targetExists = await jinro.existsUserIndexExceptOneself(userIndex, targetIndex);
                     if (targetExists) {
                         await replyBasicAction(jinro, position, userIndex, targetIndex, replyToken);
@@ -65,7 +65,7 @@ exports.handler = async (event: any, context: any): Promise<void> => {
                 const targetExists = await jinro.existsUserIndexExceptOneself(userIndex, targetIndex);
                 if (targetExists) {
                     const position = await jinro.getPosition(userIndex);
-                    if (position == jinro.positionNames.guru) {
+                    if (position == jinro.positionNames.werewolf) {
                         await replyBasicAction(jinro, position, userIndex, targetIndex, replyToken);
                     }
                     if (position == jinro.positionNames.detective) {
@@ -84,8 +84,8 @@ const replyBasicAction = async (jinro: jinro_module.Jinro, position: string, use
 
     const displayName = await jinro.getDisplayName(targetIndex);
 
-    if (position == jinro.positionNames.guru) {
-        const replyMessage = await import("./template/replyGuruAction");
+    if (position == jinro.positionNames.werewolf) {
+        const replyMessage = await import("./template/replyWerewolfAction");
         promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(displayName)));
     }
 
@@ -102,11 +102,11 @@ const replyDetectiveAction = async (jinro: jinro_module.Jinro, userIndex: number
     const promises: Promise<void>[] = [];
 
     await jinro.action.act(userIndex, targetIndex);
-    const isGuru = await jinro.isGuru(targetIndex);
+    const isWerewolf = await jinro.isWerewolf(targetIndex);
     const displayName = await jinro.getDisplayName(targetIndex);
 
     const replyMessage = await import("./template/replyDetectiveAction");
-    promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(displayName, isGuru)));
+    promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(displayName, isWerewolf)));
 
     const isActionsCompleted = await jinro.action.isActionCompleted();
     if (isActionsCompleted) {
@@ -139,7 +139,7 @@ const replyActionCompleted = async (jinro: jinro_module.Jinro): Promise<void> =>
 
     const pushCraziness = await import("./template/pushUserCraziness");
 
-    const brainwashTarget = await jinro.getTargetOfPosition(jinro.positionNames.guru);
+    const brainwashTarget = await jinro.getTargetOfPosition(jinro.positionNames.werewolf);
     const spTarget = await jinro.getTargetOfPosition(jinro.positionNames.sp);
     if (brainwashTarget != -1 && brainwashTarget != spTarget) {
         promises.push(jinro.updateBrainwashStateTrue(brainwashTarget));
@@ -185,12 +185,12 @@ const replyActionCompleted = async (jinro: jinro_module.Jinro): Promise<void> =>
 
     } else { // 洗脳が完了したら
         await jinro.updateGameStatus("winner"); // 勝者発表状況をtrueにする
-        const isWinnerGuru = true;
+        const isWinnerWerewolf = true;
         const winnerIndexes = await jinro.getWinnerIndexes();
 
         const replyWinner = await import("./template/replyWinner");
         const displayNames = await jinro.getDisplayNames();
-        const pushWinnerMessage = await replyWinner.main(displayNames, isWinnerGuru, winnerIndexes);
+        const pushWinnerMessage = await replyWinner.main(displayNames, isWinnerWerewolf, winnerIndexes);
 
         pushMessage = pushMessage.concat(pushWinnerMessage);
         promises.push(dabyss.pushMessage(jinro.groupId, pushMessage));

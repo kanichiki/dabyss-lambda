@@ -10,8 +10,8 @@ export const main = async (displayName: string, position: string, isBrainwash: b
         }
     ]
 
-    if (position == jinro_module.guru || position == jinro_module.detective) {
-        if (position == jinro_module.guru) {
+    if (position == jinro_module.werewolf || position == jinro_module.detective) {
+        if (position == jinro_module.werewolf) {
             actionMessage = "噛む人を選んでください";
             for (let i = 0; i < targetDisplayNames.length; i++) {
                 const targetMessage: line.FlexButton = {

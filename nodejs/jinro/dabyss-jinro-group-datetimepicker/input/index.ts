@@ -69,11 +69,11 @@ const replyConfirm = async (jinro: jinro_module.Jinro, replyToken: string): Prom
     const mode = jinro.gameMode;
     const type = jinro.talkType;
     const timer = await jinro.getTimerString();
-    const zeroGuru = jinro.zeroGuru;
+    const zeroWerewolf = jinro.zeroWerewolf;
     const zeroDetective = jinro.zeroDetective;
 
     const replyMessage = await import("./template/replyChanged");
-    promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(userNumber, mode, type, timer, zeroGuru, zeroDetective)));
+    promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(userNumber, mode, type, timer, zeroWerewolf, zeroDetective)));
 
     await Promise.all(promises);
     return;

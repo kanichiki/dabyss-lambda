@@ -1,6 +1,6 @@
 import line = require('@line/bot-sdk');
 
-export const main = async (displayNames: string[], isWinnerGuru: boolean, winnerIndexes: number[]): Promise<line.Message[]> => {
+export const main = async (displayNames: string[], isWinnerWerewolf: boolean, winnerIndexes: number[]): Promise<line.Message[]> => {
   let winners = [];
   for (let winnerIndex of winnerIndexes) {
     winners.push(displayNames[winnerIndex]);
@@ -9,7 +9,7 @@ export const main = async (displayNames: string[], isWinnerGuru: boolean, winner
 
   let message1 = ""
   let message2 = "";
-  if (isWinnerGuru) {
+  if (isWinnerWerewolf) {
     message1 = "狂ってない人が1人以下になりました"
     message2 = "教団陣営の勝利です！！"
   } else {

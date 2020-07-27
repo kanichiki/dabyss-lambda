@@ -1,8 +1,8 @@
 import line = require('@line/bot-sdk');
 
-export const main = async (displayName: string, isGuru: boolean): Promise<line.Message[]> => {
+export const main = async (displayName: string, isWerewolf: boolean): Promise<line.Message[]> => {
     let message = "";
-    if (isGuru) {
+    if (isWerewolf) {
         message = "教祖でした"
     } else {
         message = "教祖ではありませんでした"
