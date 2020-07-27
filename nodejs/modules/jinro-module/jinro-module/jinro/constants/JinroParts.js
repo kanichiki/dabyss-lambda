@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.positionNumberMessage = exports.timerMessage = exports.settingConfirmMessage = exports.modeOptions = exports.typeOptions = exports.citizen = exports.hunter = exports.psychic = exports.forecaster = exports.madman = exports.werewolf = void 0;
+exports.positionNumberMessage = exports.timerMessage = exports.settingConfirmMessage = exports.typeOptions = exports.citizen = exports.hunter = exports.psychic = exports.forecaster = exports.madman = exports.werewolf = void 0;
 const dabyss = require("dabyss");
 exports.werewolf = "人狼";
 exports.madman = "狂人";
@@ -113,7 +113,7 @@ exports.typeOptions = {
     }
 };
 
-exports.settingConfirmMessage = (userNumber, mode, type, timer, zeroWerewolf, zeroForecaster) => __awaiter(void 0, void 0, void 0, function* () {
+exports.settingConfirmMessage = (userNumber, type, timer, zeroWerewolf, zeroForecaster) => __awaiter(void 0, void 0, void 0, function* () {
     let zeroWerewolfMessage;
     if (zeroWerewolf) {
         zeroWerewolfMessage = "あり";
@@ -170,11 +170,6 @@ exports.settingConfirmMessage = (userNumber, mode, type, timer, zeroWerewolf, ze
                         },
                         {
                             "type": "text",
-                            "text": `モード : ${mode}`,
-                            "size": "md"
-                        },
-                        {
-                            "type": "text",
                             "text": `話し合い方法 : ${type.toString()}`,
                             "size": "md"
                         },
@@ -200,15 +195,6 @@ exports.settingConfirmMessage = (userNumber, mode, type, timer, zeroWerewolf, ze
                     "type": "box",
                     "layout": "horizontal",
                     "contents": [
-                        {
-                            "type": "button",
-                            "action": {
-                                "type": "message",
-                                "label": "モード変更",
-                                "text": "モード変更"
-                            },
-                            "color": dabyss.mainColor
-                        },
                         {
                             "type": "button",
                             "action": {
@@ -323,7 +309,6 @@ exports.timerMessage = () => __awaiter(void 0, void 0, void 0, function* () {
                     "action": {
                         "type": "datetimepicker",
                         "label": "議論時間設定",
-                        "mode": "time",
                         "data": "timer",
                         "initial": "05:00",
                         "max": "23:59",

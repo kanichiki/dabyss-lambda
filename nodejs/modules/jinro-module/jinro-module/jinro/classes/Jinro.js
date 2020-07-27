@@ -30,7 +30,7 @@ class Jinro extends dabyss.Game {
      */
     constructor(groupId) {
         super(groupId);
-        this.settingNames = ["mode", "type", "timer"];
+        this.settingNames = ["type", "timer"];
         this.defaultSettingStatus = [false, false, true];
         this.positionNames = {
             werewolf: "人狼",
@@ -39,7 +39,6 @@ class Jinro extends dabyss.Game {
             citizen: "市民",
             sp: "用心棒"
         };
-        this.gameMode = "";
         this.talkType = -1;
         this.zeroDetective = false;
         this.zeroWerewolf = false;
@@ -72,7 +71,6 @@ class Jinro extends dabyss.Game {
                             this.gameStatus = game.game_status;
                             this.settingStatus = game.setting_status;
                             this.timer = game.timer;
-                            this.gameMode = game.game_mode;
                             this.talkType = game.talk_type;
                             this.zeroDetective = game.zero_detective;
                             this.zeroWerewolf = game.zero_werewolf;
@@ -183,12 +181,6 @@ class Jinro extends dabyss.Game {
         return __awaiter(this, void 0, void 0, function* () {
             const position = this.positions[userIndex];
             return position;
-        });
-    }
-    updateGameMode(mode) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.gameMode = mode;
-            dabyss.dynamoUpdate(this.gameTable, this.gameKey, "game_mode", this.gameMode);
         });
     }
     updateTalkType(type) {

@@ -12,7 +12,6 @@ export declare class Jinro extends dabyss.Game {
     positionNames: {
         [key: string]: string;
     };
-    gameMode: string;
     talkType: number;
     zeroDetective: boolean;
     zeroWerewolf: boolean;
@@ -48,7 +47,6 @@ export declare class Jinro extends dabyss.Game {
     chooseSpNumber(): Promise<number>;
     updatePositions(): Promise<void>;
     getPosition(userIndex: number): Promise<string>;
-    updateGameMode(mode: string): Promise<void>;
     updateTalkType(type: number): Promise<void>;
     switchZeroWerewolf(): Promise<void>;
     switchZeroDetective(): Promise<void>;
