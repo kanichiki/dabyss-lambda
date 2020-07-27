@@ -1,6 +1,5 @@
-import { Craziness } from "./classes/Craziness";
-import { CrazyNoisy } from "./classes/CrazyNoisy";
+import { Jinro } from "./classes/Jinro";
 
-export { Craziness, CrazyNoisy };
+export { Jinro };
 
-export * from "./constants/crazyNoisyParts";
+export * from "./constants/JinroParts";

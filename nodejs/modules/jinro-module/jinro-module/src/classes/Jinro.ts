@@ -3,16 +3,15 @@ import { Craziness } from "./Craziness";
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { stringList } from "aws-sdk/clients/datapipeline";
 
-const crazinessTable = "dabyss-dev-craziness";
 
 /**
  * みんな狂ってるッ！！
  *
  * @export
- * @class CrazyNoisy
+ * @class Jinro
  * @extends {Game}
  */
-export class CrazyNoisy extends dabyss.Game {
+export class Jinro extends dabyss.Game {
     settingNames: string[];
     defaultSettingStatus: boolean[];
 
@@ -28,12 +27,12 @@ export class CrazyNoisy extends dabyss.Game {
 
 
     /**
-     * CrazyNoisyインスタンス作成
+     * Jinroインスタンス作成
      * 
      * @constructor
      * @extends Game
      * @param {string} groupId
-     * @memberof CrazyNoisy
+     * @memberof Jinro
      */
     constructor(groupId: string) {
         super(groupId);
@@ -62,7 +61,7 @@ export class CrazyNoisy extends dabyss.Game {
      * 初期化
      *
      * @returns {Promise<void>}
-     * @memberof CrazyNoisy
+     * @memberof Jinro
      */
     async init(): Promise<void> {
         try {
@@ -115,13 +114,13 @@ export class CrazyNoisy extends dabyss.Game {
      *
      * @static
      * @param {string} groupId
-     * @returns {Promise<CrazyNoisy>}
-     * @memberof CrazyNoisy
+     * @returns {Promise<Jinro>}
+     * @memberof Jinro
      */
-    static async createInstance(groupId: string): Promise<CrazyNoisy> {
-        const crazyNoisy: CrazyNoisy = new CrazyNoisy(groupId);
-        await crazyNoisy.init();
-        return crazyNoisy;
+    static async createInstance(groupId: string): Promise<Jinro> {
+        const jinro: Jinro = new Jinro(groupId);
+        await jinro.init();
+        return jinro;
     }
 
     async chooseFanaticNumber(): Promise<number> {
