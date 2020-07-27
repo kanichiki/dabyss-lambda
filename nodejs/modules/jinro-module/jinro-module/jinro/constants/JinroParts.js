@@ -215,8 +215,8 @@ exports.settingConfirmMessage = (userNumber, type, timer, zeroWerewolf, zeroFore
                             "type": "button",
                             "action": {
                                 "type": "message",
-                                "label": "0日目洗脳有無",
-                                "text": "0日目洗脳有無"
+                                "label": "0日目襲撃有無",
+                                "text": "0日目襲撃有無"
                             },
                             "color": dabyss.mainColor
                         },
@@ -224,8 +224,8 @@ exports.settingConfirmMessage = (userNumber, type, timer, zeroWerewolf, zeroFore
                             "type": "button",
                             "action": {
                                 "type": "message",
-                                "label": "0日目調査有無",
-                                "text": "0日目調査有無"
+                                "label": "0日目占い有無",
+                                "text": "0日目占い有無"
                             },
                             "color": dabyss.mainColor
                         }

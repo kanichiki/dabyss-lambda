@@ -1,9 +1,11 @@
 import dabyss = require('dabyss');
 import line = require('@line/bot-sdk');
 
-export const guru = "教祖"
-export const fanatic = "狂信者"
-export const detective = "探偵"
+export const werewolf = "人狼"
+export const forecaster = "占い師"
+export const madman = "狂人"
+export const hunter = "狩人"
+export const psychic = "霊媒師"
 export const citizen = "市民"
 export const typeOptions: line.FlexBubble = {
   "type": "bubble",
@@ -101,95 +103,19 @@ export const typeOptions: line.FlexBubble = {
   }
 }
 
-export const modeOptions: line.FlexBubble = {
-  "type": "bubble",
-  "body": {
-    "type": "box",
-    "layout": "vertical",
-    "contents": [
-      {
-        "type": "text",
-        "text": "モードを選んでください！",
-        "size": "md",
-        "wrap": true,
-        "weight": "bold",
-        "margin": "none"
-      },
-      {
-        "type": "separator"
-      },
-      {
-        "type": "text",
-        "text": "デモモードでは最初から全員に狂気が配られます。(洗脳されているわけではありません)",
-        "margin": "md",
-        "wrap": true,
-        "size": "sm"
-      },
-      {
-        "type": "text",
-        "text": "どのような狂気があるか全員が確認することができます。初めての方がいらっしゃる場合におすすめです。",
-        "margin": "md",
-        "wrap": true,
-        "size": "sm"
-      }
-    ],
-    "spacing": "xs",
-    "margin": "none"
-  },
-  "footer": {
-    "type": "box",
-    "layout": "vertical",
-    "contents": [
-      {
-        "type": "box",
-        "layout": "horizontal",
-        "contents": [
-          {
-            "type": "button",
-            "action": {
-              "type": "message",
-              "label": "ノーマル",
-              "text": "ノーマル"
-            },
-            "color": dabyss.mainColor
-          },
-          {
-            "type": "separator"
-          },
-          {
-            "type": "button",
-            "action": {
-              "type": "message",
-              "label": "デモ",
-              "text": "デモ"
-            },
-            "color": dabyss.mainColor
-          }
-        ]
-      }
-    ]
-  },
-  "styles": {
-    "body": {
-      "separator": true
-    }
-  }
-}
-
-
-export const settingConfirmMessage = async (userNumber: number, mode: string, type: number, timer: string, zeroGuru: boolean, zeroDetective: boolean): Promise<line.FlexBubble> => {
-  let zeroGuruMessage;
-  if (zeroGuru) {
-    zeroGuruMessage = "あり";
+export const settingConfirmMessage = async (userNumber: number, type: number, timer: string, zeroWerewolf: boolean, zeroForecaster: boolean): Promise<line.FlexBubble> => {
+  let zeroWerewolfMessage;
+  if (zeroWerewolf) {
+    zeroWerewolfMessage = "あり";
   } else {
-    zeroGuruMessage = "なし";
+    zeroWerewolfMessage = "なし";
   }
 
-  let zeroDetectiveMessage;
-  if (zeroDetective) {
-    zeroDetectiveMessage = "あり";
+  let zeroForecasterMessage;
+  if (zeroForecaster) {
+    zeroForecasterMessage = "あり";
   } else {
-    zeroDetectiveMessage = "なし";
+    zeroForecasterMessage = "なし";
   }
   return {
     "type": "bubble",
@@ -233,22 +159,17 @@ export const settingConfirmMessage = async (userNumber: number, mode: string, ty
             },
             {
               "type": "text",
-              "text": `モード : ${mode}`,
-              "size": "md"
-            },
-            {
-              "type": "text",
               "text": `話し合い方法 : ${type.toString()}`,
               "size": "md"
             },
             {
               "type": "text",
-              "text": `0日目洗脳(教祖) : ${zeroGuruMessage}`,
+              "text": `0日目襲撃(人狼) : ${zeroWerewolfMessage}`,
               "size": "md"
             },
             {
               "type": "text",
-              "text": `0日目調査(探偵) : ${zeroDetectiveMessage}`,
+              "text": `0日目占い(占い師) : ${zeroForecasterMessage}`,
               "size": "md"
             },
             {
@@ -263,15 +184,6 @@ export const settingConfirmMessage = async (userNumber: number, mode: string, ty
           "type": "box",
           "layout": "horizontal",
           "contents": [
-            {
-              "type": "button",
-              "action": {
-                "type": "message",
-                "label": "モード変更",
-                "text": "モード変更"
-              },
-              "color": dabyss.mainColor
-            },
             {
               "type": "button",
               "action": {
@@ -292,8 +204,8 @@ export const settingConfirmMessage = async (userNumber: number, mode: string, ty
               "type": "button",
               "action": {
                 "type": "message",
-                "label": "0日目洗脳有無",
-                "text": "0日目洗脳有無"
+                "label": "0日目襲撃有無",
+                "text": "0日目襲撃有無"
               },
               "color": dabyss.mainColor
             },
@@ -301,8 +213,8 @@ export const settingConfirmMessage = async (userNumber: number, mode: string, ty
               "type": "button",
               "action": {
                 "type": "message",
-                "label": "0日目調査有無",
-                "text": "0日目調査有無"
+                "label": "0日目襲撃有無",
+                "text": "0日目襲撃有無"
               },
               "color": dabyss.mainColor
             }
@@ -431,7 +343,7 @@ export const positionNumberMessage = async (userNumber: number, numberOption: nu
         },
         {
           "type": "text",
-          "text": "教祖 : 1人",
+          "text": "人狼 : 1人",
           "margin": "md"
         },
         {
