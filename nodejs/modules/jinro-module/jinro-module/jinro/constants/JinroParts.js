@@ -9,11 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.positionNumberMessage = exports.timerMessage = exports.settingConfirmMessage = exports.modeOptions = exports.typeOptions = exports.citizen = exports.detective = exports.fanatic = exports.werewolf = void 0;
+exports.positionNumberMessage = exports.timerMessage = exports.settingConfirmMessage = exports.modeOptions = exports.typeOptions = exports.citizen = exports.detective = exports.madman = exports.werewolf = void 0;
 const dabyss = require("dabyss");
 exports.werewolf = "人狼";
-exports.fanatic = "狂信者";
-exports.detective = "探偵";
+exports.madman = "狂人";
+exports.forecaster = "占い師";
 exports.citizen = "市民";
 exports.typeOptions = {
     "type": "bubble",

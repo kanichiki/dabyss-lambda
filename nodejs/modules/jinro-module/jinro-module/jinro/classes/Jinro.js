@@ -34,7 +34,7 @@ class Jinro extends dabyss.Game {
         this.defaultSettingStatus = [false, false, true];
         this.positionNames = {
             werewolf: "人狼",
-            fanatic: "狂信者",
+            madman: "狂信者",
             detective: "探偵",
             citizen: "市民",
             sp: "用心棒"
@@ -110,12 +110,12 @@ class Jinro extends dabyss.Game {
             return jinro;
         });
     }
-    chooseFanaticNumber() {
+    chooseMadmanNumber() {
         return __awaiter(this, void 0, void 0, function* () {
             const userNumber = yield this.getUserNumber();
             const number = Math.floor((userNumber - 1) / 3);
-            const fanaticNumber = yield dabyss.getRandomNumber(number - 1, number);
-            return fanaticNumber;
+            const madmanNumber = yield dabyss.getRandomNumber(number - 1, number);
+            return madmanNumber;
         });
     }
     chooseDetectiveNumber() {
@@ -143,8 +143,8 @@ class Jinro extends dabyss.Game {
         return __awaiter(this, void 0, void 0, function* () {
             const userNumber = yield this.getUserNumber();
             const werewolfNumber = 1;
-            const fanaticNumber = yield this.chooseFanaticNumber();
-            // const fanaticNumber = 1;
+            const madmanNumber = yield this.chooseMadmanNumber();
+            // const madmanNumber = 1;
             const detectiveNumber = yield this.chooseDetectiveNumber();
             // const detectiveNumber = 1;
             const spNumber = yield this.chooseSpNumber();
@@ -154,7 +154,7 @@ class Jinro extends dabyss.Game {
             }
             const positionNumbers = {
                 werewolf: werewolfNumber,
-                fanatic: fanaticNumber,
+                madman: madmanNumber,
                 detective: detectiveNumber,
                 sp: spNumber
             };
@@ -213,7 +213,7 @@ class Jinro extends dabyss.Game {
         return __awaiter(this, void 0, void 0, function* () {
             const positions = this.positions;
             for (let i = 0; i < positions.length; i++) {
-                if (positions[i] == this.positionNames.werewolf || positions[i] == this.positionNames.fanatic) {
+                if (positions[i] == this.positionNames.werewolf || positions[i] == this.positionNames.madman) {
                     this.brainwashStatus[i] = true;
                 }
                 else {
@@ -264,7 +264,7 @@ class Jinro extends dabyss.Game {
             const userNumber = yield this.getUserNumber();
             for (let i = 0; i < userNumber; i++) {
                 this.crazinessIds[i] = [];
-                if (this.positions[i] == this.positionNames.fanatic) {
+                if (this.positions[i] == this.positionNames.madman) {
                     const crazinessId = yield this.chooseCrazinessId(this.talkType);
                     this.crazinessIds[i].push(crazinessId);
                 }
@@ -310,7 +310,7 @@ class Jinro extends dabyss.Game {
             let res = [];
             for (let i = 0; i < this.positions.length; i++) {
                 if (this.winner == "werewolf") { // 人狼陣営勝利なら
-                    if (this.positions[i] == this.positionNames.werewolf || this.positions[i] == this.positionNames.fanatic) {
+                    if (this.positions[i] == this.positionNames.werewolf || this.positions[i] == this.positionNames.madman) {
                         res.push(i);
                     }
                 }

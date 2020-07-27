@@ -43,7 +43,7 @@ export declare class Jinro extends dabyss.Game {
      * @memberof Jinro
      */
     static createInstance(groupId: string): Promise<Jinro>;
-    chooseFanaticNumber(): Promise<number>;
+    chooseMadmanNumber(): Promise<number>;
     chooseDetectiveNumber(): Promise<number>;
     chooseSpNumber(): Promise<number>;
     updatePositions(): Promise<void>;
