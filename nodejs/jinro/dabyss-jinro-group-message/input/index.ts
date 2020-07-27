@@ -209,11 +209,6 @@ const replyConfirmYes = async (jinro: jinro_module.Jinro, replyToken: string): P
     await jinro.updatePositions();
     const mode = jinro.gameMode;
 
-    if (mode != "デモ") {
-        promises.push(jinro.updateDefaultCrazinessIds());
-    } else {
-        promises.push(jinro.updateDefaultCrazinessIdsInDemo());
-    }
     promises.push(jinro.updateDefaultBrainwashStatus()); // 洗脳ステータスを初期配置
     promises.push(jinro.updateDefaultPositionConfirmStatus()); // 役職確認ステータスを全員false
 
@@ -279,23 +274,9 @@ const replyAnnounceResult = async (jinro: jinro_module.Jinro, replyToken: string
     const userNumber = await jinro.getUserNumber();
     const displayNames = await jinro.getDisplayNames();
     const positions = jinro.positions;
-    const crazinessIds = jinro.crazinessIds;
-
-    let contentsList: string[][] = []
-    for (let i = 0; i < userNumber; i++) {
-        let contents: string[] = [];
-        if (crazinessIds[i][0] != null) {
-            for (let crazinessId of crazinessIds[i]) {
-                const craziness = await jinro.Craziness.createInstance(crazinessId);
-                const content = craziness.content;
-                contents.push(content);
-            }
-        }
-        contentsList.push(contents);
-    }
 
     const replyMessage = await import("./template/replyAnnounceResult");
-    promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(displayNames, positions, contentsList)));
+    promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(displayNames, positions)));
 
     await Promise.all(promises);
     return;
