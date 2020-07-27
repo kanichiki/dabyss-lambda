@@ -1,5 +1,4 @@
 import dabyss = require('dabyss');
-import { Craziness } from "./Craziness";
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { stringList } from "aws-sdk/clients/datapipeline";
 
