@@ -15,7 +15,7 @@ export declare class Jinro extends dabyss.Game {
     gameMode: string;
     talkType: number;
     zeroDetective: boolean;
-    zeroGuru: boolean;
+    zeroWerewolf: boolean;
     brainwashStatus: boolean[];
     crazinessIds: number[][];
     /**
@@ -50,7 +50,7 @@ export declare class Jinro extends dabyss.Game {
     getPosition(userIndex: number): Promise<string>;
     updateGameMode(mode: string): Promise<void>;
     updateTalkType(type: number): Promise<void>;
-    switchZeroGuru(): Promise<void>;
+    switchZeroWerewolf(): Promise<void>;
     switchZeroDetective(): Promise<void>;
     updateDefaultBrainwashStatus(): Promise<void>;
     isBrainwash(index: number): Promise<boolean>;
@@ -61,6 +61,6 @@ export declare class Jinro extends dabyss.Game {
     updateDefaultCrazinessIds(): Promise<void>;
     updateDefaultCrazinessIdsInDemo(): Promise<void>;
     addCrazinessId(index: number): Promise<void>;
-    isGuru(index: number): Promise<boolean>;
+    isWerewolf(index: number): Promise<boolean>;
     getWinnerIndexes(): Promise<number[]>;
 }
