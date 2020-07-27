@@ -33,7 +33,7 @@ class Jinro extends dabyss.Game {
         this.settingNames = ["mode", "type", "timer"];
         this.defaultSettingStatus = [false, false, true];
         this.positionNames = {
-            guru: "教祖",
+            werewolf: "人狼",
             fanatic: "狂信者",
             detective: "探偵",
             citizen: "市民",
@@ -42,7 +42,7 @@ class Jinro extends dabyss.Game {
         this.gameMode = "";
         this.talkType = -1;
         this.zeroDetective = false;
-        this.zeroGuru = false;
+        this.zeroWerewolf = false;
         this.brainwashStatus = [];
         this.crazinessIds = [];
     }
@@ -75,7 +75,7 @@ class Jinro extends dabyss.Game {
                             this.gameMode = game.game_mode;
                             this.talkType = game.talk_type;
                             this.zeroDetective = game.zero_detective;
-                            this.zeroGuru = game.zero_guru;
+                            this.zeroWerewolf = game.zero_werewolf;
                             if (game.positions) {
                                 this.positions = game.positions;
                             }
@@ -142,7 +142,7 @@ class Jinro extends dabyss.Game {
     updatePositions() {
         return __awaiter(this, void 0, void 0, function* () {
             const userNumber = yield this.getUserNumber();
-            const guruNumber = 1;
+            const werewolfNumber = 1;
             const fanaticNumber = yield this.chooseFanaticNumber();
             // const fanaticNumber = 1;
             const detectiveNumber = yield this.chooseDetectiveNumber();
@@ -153,7 +153,7 @@ class Jinro extends dabyss.Game {
                 isDecided[i] = false;
             }
             const positionNumbers = {
-                guru: guruNumber,
+                werewolf: werewolfNumber,
                 fanatic: fanaticNumber,
                 detective: detectiveNumber,
                 sp: spNumber
@@ -197,10 +197,10 @@ class Jinro extends dabyss.Game {
             dabyss.dynamoUpdate(this.gameTable, this.gameKey, "talk_type", this.talkType);
         });
     }
-    switchZeroGuru() {
+    switchZeroWerewolf() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.zeroGuru = !(this.zeroGuru);
-            dabyss.dynamoUpdate(this.gameTable, this.gameKey, "zero_guru", this.zeroGuru);
+            this.zeroWerewolf = !(this.zeroWerewolf);
+            dabyss.dynamoUpdate(this.gameTable, this.gameKey, "zero_werewolf", this.zeroWerewolf);
         });
     }
     switchZeroDetective() {
@@ -213,7 +213,7 @@ class Jinro extends dabyss.Game {
         return __awaiter(this, void 0, void 0, function* () {
             const positions = this.positions;
             for (let i = 0; i < positions.length; i++) {
-                if (positions[i] == this.positionNames.guru || positions[i] == this.positionNames.fanatic) {
+                if (positions[i] == this.positionNames.werewolf || positions[i] == this.positionNames.fanatic) {
                     this.brainwashStatus[i] = true;
                 }
                 else {
@@ -299,9 +299,9 @@ class Jinro extends dabyss.Game {
             dabyss.dynamoUpdate(this.gameTable, this.gameKey, "craziness_ids", this.crazinessIds);
         });
     }
-    isGuru(index) {
+    isWerewolf(index) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = (this.positions[index] == this.positionNames.guru);
+            const res = (this.positions[index] == this.positionNames.werewolf);
             return res;
         });
     }
@@ -309,8 +309,8 @@ class Jinro extends dabyss.Game {
         return __awaiter(this, void 0, void 0, function* () {
             let res = [];
             for (let i = 0; i < this.positions.length; i++) {
-                if (this.winner == "guru") { // 教団陣営勝利なら
-                    if (this.positions[i] == this.positionNames.guru || this.positions[i] == this.positionNames.fanatic) {
+                if (this.winner == "werewolf") { // 人狼陣営勝利なら
+                    if (this.positions[i] == this.positionNames.werewolf || this.positions[i] == this.positionNames.fanatic) {
                         res.push(i);
                     }
                 }
