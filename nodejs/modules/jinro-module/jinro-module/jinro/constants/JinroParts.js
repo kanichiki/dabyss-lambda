@@ -9,11 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.positionNumberMessage = exports.timerMessage = exports.settingConfirmMessage = exports.modeOptions = exports.typeOptions = exports.citizen = exports.detective = exports.madman = exports.werewolf = void 0;
+exports.positionNumberMessage = exports.timerMessage = exports.settingConfirmMessage = exports.modeOptions = exports.typeOptions = exports.citizen = exports.hunter = exports.psychic = exports.forecaster = exports.madman = exports.werewolf = void 0;
 const dabyss = require("dabyss");
 exports.werewolf = "人狼";
 exports.madman = "狂人";
 exports.forecaster = "占い師";
+exports.hunter = "狩人"
+exports.psychic = "霊媒師"
 exports.citizen = "市民";
 exports.typeOptions = {
     "type": "bubble",
@@ -184,7 +186,7 @@ exports.modeOptions = {
         }
     }
 };
-exports.settingConfirmMessage = (userNumber, mode, type, timer, zeroWerewolf, zeroDetective) => __awaiter(void 0, void 0, void 0, function* () {
+exports.settingConfirmMessage = (userNumber, mode, type, timer, zeroWerewolf, zeroForecaster) => __awaiter(void 0, void 0, void 0, function* () {
     let zeroWerewolfMessage;
     if (zeroWerewolf) {
         zeroWerewolfMessage = "あり";
@@ -192,12 +194,12 @@ exports.settingConfirmMessage = (userNumber, mode, type, timer, zeroWerewolf, ze
     else {
         zeroWerewolfMessage = "なし";
     }
-    let zeroDetectiveMessage;
-    if (zeroDetective) {
-        zeroDetectiveMessage = "あり";
+    let zeroForecasterMessage;
+    if (zeroForecaster) {
+        zeroForecasterMessage = "あり";
     }
     else {
-        zeroDetectiveMessage = "なし";
+        zeroForecasterMessage = "なし";
     }
     return {
         "type": "bubble",
@@ -256,7 +258,7 @@ exports.settingConfirmMessage = (userNumber, mode, type, timer, zeroWerewolf, ze
                         },
                         {
                             "type": "text",
-                            "text": `0日目調査(探偵) : ${zeroDetectiveMessage}`,
+                            "text": `0日目調査(探偵) : ${zeroForecasterMessage}`,
                             "size": "md"
                         },
                         {
@@ -408,14 +410,14 @@ exports.timerMessage = () => __awaiter(void 0, void 0, void 0, function* () {
     };
 });
 exports.positionNumberMessage = (userNumber, numberOption) => __awaiter(void 0, void 0, void 0, function* () {
-    let detectiveNumber = "";
+    let forecasterNumber = "";
     let citizenNumber = "";
     if (userNumber > 6) {
-        detectiveNumber = "1";
+        forecasterNumber = "1";
         citizenNumber = `${userNumber - numberOption - 2}~${userNumber - numberOption - 1}`;
     }
     else {
-        detectiveNumber = `0~1`;
+        forecasterNumber = `0~1`;
         citizenNumber = `${userNumber - numberOption * 2 - 1}~${userNumber - numberOption * 2 + 1}`;
     }
     return {
@@ -436,16 +438,16 @@ exports.positionNumberMessage = (userNumber, numberOption) => __awaiter(void 0, 
                 },
                 {
                     "type": "text",
-                    "text": "教祖 : 1人",
+                    "text": "人狼 : 1人",
                     "margin": "md"
                 },
                 {
                     "type": "text",
-                    "text": `狂信者 : ${numberOption - 1}~${numberOption}人`
+                    "text": `狂人 : ${numberOption - 1}~${numberOption}人`
                 },
                 {
                     "type": "text",
-                    "text": `探偵 : ${detectiveNumber}人`
+                    "text": `占い師 : ${forecasterNumber}人`
                 },
                 {
                     "type": "text",
