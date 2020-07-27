@@ -36,7 +36,7 @@ exports.handler = async (event: any, context: any): Promise<void> => {
             if (!confirmsState) {
                 const position: string = await jinro.getPosition(userIndex);
                 const zeroWerewolf: boolean = jinro.zeroWerewolf;
-                const zeroDetective: boolean = jinro.zeroDetective;
+                const zeroForecaster: boolean = jinro.zeroForecaster;
 
                 if (position == jinro.positionNames.werewolf && zeroWerewolf) {
                     const targetExists = await jinro.existsUserIndexExceptOneself(userIndex, targetIndex);
@@ -44,11 +44,11 @@ exports.handler = async (event: any, context: any): Promise<void> => {
                         await replyBasicAction(jinro, position, userIndex, targetIndex, replyToken);
                     }
 
-                } else if (position == jinro.positionNames.detective && zeroDetective) {
+                } else if (position == jinro.positionNames.forecaster && zeroForecaster) {
                     const targetExists = await jinro.existsUserIndexExceptOneself(userIndex, targetIndex);
                     if (targetExists) {
 
-                        await replyDetectiveAction(jinro, userIndex, targetIndex, replyToken);
+                        await replyForecasterAction(jinro, userIndex, targetIndex, replyToken);
                     }
 
                 } else {
@@ -68,8 +68,8 @@ exports.handler = async (event: any, context: any): Promise<void> => {
                     if (position == jinro.positionNames.werewolf) {
                         await replyBasicAction(jinro, position, userIndex, targetIndex, replyToken);
                     }
-                    if (position == jinro.positionNames.detective) {
-                        await replyDetectiveAction(jinro, userIndex, targetIndex, replyToken);
+                    if (position == jinro.positionNames.forecaster) {
+                        await replyForecasterAction(jinro, userIndex, targetIndex, replyToken);
                     }
                 }
             }
@@ -98,14 +98,14 @@ const replyBasicAction = async (jinro: jinro_module.Jinro, position: string, use
     return;
 }
 
-const replyDetectiveAction = async (jinro: jinro_module.Jinro, userIndex: number, targetIndex: number, replyToken: string): Promise<void> => {
+const replyForecasterAction = async (jinro: jinro_module.Jinro, userIndex: number, targetIndex: number, replyToken: string): Promise<void> => {
     const promises: Promise<void>[] = [];
 
     await jinro.action.act(userIndex, targetIndex);
     const isWerewolf = await jinro.isWerewolf(targetIndex);
     const displayName = await jinro.getDisplayName(targetIndex);
 
-    const replyMessage = await import("./template/replyDetectiveAction");
+    const replyMessage = await import("./template/replyForecasterAction");
     promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(displayName, isWerewolf)));
 
     const isActionsCompleted = await jinro.action.isActionCompleted();

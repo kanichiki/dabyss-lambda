@@ -2,7 +2,7 @@ import line = require('@line/bot-sdk');
 import dabyss = require('dabyss');
 import jinro_module = require('jinro');
 
-export const main = async (displayName: string, position: string, targetDisplayNames: string[], targetUserIndexes: number[], zeroWerewolf: boolean, zeroDetective: boolean): Promise<line.Message[]> => {
+export const main = async (displayName: string, position: string, targetDisplayNames: string[], targetUserIndexes: number[], zeroWerewolf: boolean, zeroForecaster: boolean): Promise<line.Message[]> => {
     let actionMessage: string = "";
     let targetMessages: line.FlexComponent[] = [
         {
@@ -25,7 +25,7 @@ export const main = async (displayName: string, position: string, targetDisplayN
             }
             targetMessages.push(targetMessage);
         }
-    } else if (position == jinro_module.detective && zeroDetective) {
+    } else if (position == jinro_module.forecaster && zeroForecaster) {
 
         actionMessage = "占う人を選んでください";
         for (let i = 0; i < targetDisplayNames.length; i++) {

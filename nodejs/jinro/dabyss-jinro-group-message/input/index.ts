@@ -73,7 +73,7 @@ exports.handler = async (event: any, context: any): Promise<void> => {
                         changeSetting = "zeroWerewolf";
                         break;
                     case "0日目占い有無":
-                        changeSetting = "zeroDetective";
+                        changeSetting = "zeroForecaster";
                         break;
                 }
                 if (changeSetting != "") {
@@ -175,8 +175,8 @@ const replySettingChange = async (jinro: jinro_module.Jinro, setting: string, re
         await jinro.switchZeroWerewolf();
         promises.push(replyConfirm(jinro, replyToken));
     }
-    if (setting == "zeroDetective") {
-        await jinro.switchZeroDetective();
+    if (setting == "zeroForecaster") {
+        await jinro.switchZeroForecaster();
         promises.push(replyConfirm(jinro, replyToken));
     }
 
@@ -192,10 +192,10 @@ const replyConfirm = async (jinro: jinro_module.Jinro, replyToken: string): Prom
     const type = jinro.talkType;
     const timer = await jinro.getTimerString();
     const zeroWerewolf = jinro.zeroWerewolf;
-    const zeroDetective = jinro.zeroDetective;
+    const zeroForecaster = jinro.zeroForecaster;
 
     const replyMessage = await import("./template/replyChanged");
-    promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(userNumber, mode, type, timer, zeroWerewolf, zeroDetective)));
+    promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(userNumber, mode, type, timer, zeroWerewolf, zeroForecaster)));
 
     await Promise.all(promises);
     return;
@@ -222,7 +222,7 @@ const replyConfirmYes = async (jinro: jinro_module.Jinro, replyToken: string): P
     const positions = jinro.positions;
     const userNumber = await jinro.getUserNumber();
     const zeroWerewolf = jinro.zeroWerewolf;
-    const zeroDetective = jinro.zeroDetective;
+    const zeroForecaster = jinro.zeroForecaster;
 
     promises.push(jinro.putZeroAction());
 
@@ -231,7 +231,7 @@ const replyConfirmYes = async (jinro: jinro_module.Jinro, replyToken: string): P
         const targetUserIndexes = await jinro.getUserIndexesExceptOneself(i);
 
         const pushPosition = await import("./template/pushUserPosition");
-        promises.push(dabyss.pushMessage(userIds[i], await pushPosition.main(displayNames[i], positions[i], targetDisplayNames, targetUserIndexes, zeroWerewolf, zeroDetective)));
+        promises.push(dabyss.pushMessage(userIds[i], await pushPosition.main(displayNames[i], positions[i], targetDisplayNames, targetUserIndexes, zeroWerewolf, zeroForecaster)));
     }
 
     const numberOption = Math.floor((userNumber - 1) / 3);
