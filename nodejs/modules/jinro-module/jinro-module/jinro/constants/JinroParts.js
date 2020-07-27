@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.positionNumberMessage = exports.timerMessage = exports.settingConfirmMessage = exports.modeOptions = exports.typeOptions = exports.citizen = exports.detective = exports.fanatic = exports.guru = void 0;
+exports.positionNumberMessage = exports.timerMessage = exports.settingConfirmMessage = exports.modeOptions = exports.typeOptions = exports.citizen = exports.detective = exports.fanatic = exports.werewolf = void 0;
 const dabyss = require("dabyss");
-exports.guru = "教祖";
+exports.werewolf = "人狼";
 exports.fanatic = "狂信者";
 exports.detective = "探偵";
 exports.citizen = "市民";
@@ -184,13 +184,13 @@ exports.modeOptions = {
         }
     }
 };
-exports.settingConfirmMessage = (userNumber, mode, type, timer, zeroGuru, zeroDetective) => __awaiter(void 0, void 0, void 0, function* () {
-    let zeroGuruMessage;
-    if (zeroGuru) {
-        zeroGuruMessage = "あり";
+exports.settingConfirmMessage = (userNumber, mode, type, timer, zeroWerewolf, zeroDetective) => __awaiter(void 0, void 0, void 0, function* () {
+    let zeroWerewolfMessage;
+    if (zeroWerewolf) {
+        zeroWerewolfMessage = "あり";
     }
     else {
-        zeroGuruMessage = "なし";
+        zeroWerewolfMessage = "なし";
     }
     let zeroDetectiveMessage;
     if (zeroDetective) {
@@ -251,7 +251,7 @@ exports.settingConfirmMessage = (userNumber, mode, type, timer, zeroGuru, zeroDe
                         },
                         {
                             "type": "text",
-                            "text": `0日目洗脳(教祖) : ${zeroGuruMessage}`,
+                            "text": `0日目襲撃(人狼) : ${zeroWerewolfMessage}`,
                             "size": "md"
                         },
                         {
