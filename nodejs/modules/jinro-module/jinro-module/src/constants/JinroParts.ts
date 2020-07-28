@@ -103,20 +103,7 @@ export const typeOptions: line.FlexBubble = {
   }
 }
 
-export const settingConfirmMessage = async (userNumber: number, type: number, timer: string, zeroWerewolf: boolean, zeroForecaster: boolean): Promise<line.FlexBubble> => {
-  let zeroWerewolfMessage;
-  if (zeroWerewolf) {
-    zeroWerewolfMessage = "あり";
-  } else {
-    zeroWerewolfMessage = "なし";
-  }
-
-  let zeroForecasterMessage;
-  if (zeroForecaster) {
-    zeroForecasterMessage = "あり";
-  } else {
-    zeroForecasterMessage = "なし";
-  }
+export const settingConfirmMessage = async (userNumber: number, type: number, timer: string): Promise<line.FlexBubble> => {
   return {
     "type": "bubble",
     "size": "giga",
@@ -164,12 +151,12 @@ export const settingConfirmMessage = async (userNumber: number, type: number, ti
             },
             {
               "type": "text",
-              "text": `0日目襲撃(人狼) : ${zeroWerewolfMessage}`,
+              "text": `0日目襲撃(人狼) : なし`,
               "size": "md"
             },
             {
               "type": "text",
-              "text": `0日目占い(占い師) : ${zeroForecasterMessage}`,
+              "text": `0日目占い(占い師) : あり`,
               "size": "md"
             },
             {
@@ -190,31 +177,6 @@ export const settingConfirmMessage = async (userNumber: number, type: number, ti
                 "type": "message",
                 "label": "議論時間変更",
                 "text": "議論時間変更"
-              },
-              "color": dabyss.mainColor
-            }
-          ],
-          "margin": "md"
-        },
-        {
-          "type": "box",
-          "layout": "horizontal",
-          "contents": [
-            {
-              "type": "button",
-              "action": {
-                "type": "message",
-                "label": "0日目襲撃有無",
-                "text": "0日目襲撃有無"
-              },
-              "color": dabyss.mainColor
-            },
-            {
-              "type": "button",
-              "action": {
-                "type": "message",
-                "label": "0日目襲撃有無",
-                "text": "0日目襲撃有無"
               },
               "color": dabyss.mainColor
             }

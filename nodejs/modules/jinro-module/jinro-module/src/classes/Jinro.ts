@@ -16,14 +16,7 @@ export class Jinro extends dabyss.Game {
 
     positionNames: { [key: string]: string };
 
-    gameMode: string;
     talkType: number;
-    zeroDetective: boolean;
-    zeroGuru: boolean;
-
-    brainwashStatus: boolean[];
-    crazinessIds: number[][];
-
 
     /**
      * Jinroインスタンス作成
@@ -35,24 +28,19 @@ export class Jinro extends dabyss.Game {
      */
     constructor(groupId: string) {
         super(groupId);
-        this.settingNames = ["mode", "type", "timer"];
-        this.defaultSettingStatus = [false, false, true];
+        this.settingNames = ["type", "timer"];
+        this.defaultSettingStatus = [false, true];
 
         this.positionNames = {
-            guru: "教祖",
-            fanatic: "狂信者",
-            detective: "探偵",
+            werewolf: "人狼",
+            madman: "狂人",
+            forecaster: "占い師",
+            psychic: "霊媒師",
+            hunter: "狩人",
             citizen: "市民",
-            sp: "用心棒"
         }
 
-        this.gameMode = "";
         this.talkType = -1;
-        this.zeroDetective = false;
-        this.zeroGuru = false;
-
-        this.brainwashStatus = [];
-        this.crazinessIds = [];
     }
 
 
@@ -84,19 +72,10 @@ export class Jinro extends dabyss.Game {
                         this.settingStatus = game.setting_status as boolean[];
                         this.timer = game.timer as string;
 
-                        this.gameMode = game.game_mode as string;
                         this.talkType = game.talk_type as number;
-                        this.zeroDetective = game.zero_detective as boolean;
-                        this.zeroGuru = game.zero_guru as boolean;
 
                         if (game.positions) {
                             this.positions = game.positions as string[];
-                        }
-                        if (game.brainwash_status) {
-                            this.brainwashStatus = game.brainwash_status as boolean[];
-                        }
-                        if (game.craziness_ids) {
-                            this.crazinessIds = game.craziness_ids as number[][];
                         }
                     }
                 }
@@ -122,74 +101,68 @@ export class Jinro extends dabyss.Game {
         return jinro;
     }
 
-    async chooseFanaticNumber(): Promise<number> {
-        const userNumber: number = await this.getUserNumber();
-        const number: number = Math.floor((userNumber - 1) / 3);
-        const fanaticNumber: number = await dabyss.getRandomNumber(number - 1, number);
-        return fanaticNumber;
-    }
-
-    async chooseDetectiveNumber(): Promise<number> {
-        const userNumber: number = await this.getUserNumber();
-        const number: number = Math.floor((userNumber - 1) / 3);
-        let detectiveNumber: number = await dabyss.getRandomNumber(number - 1, number);
-        if (detectiveNumber > 1) {
-            detectiveNumber = 1;
+    async makePositionsNumberList(): Promise<number[]> {
+        const userNumer: number = await this.getUserNumber();
+        let position_num_list: number[] = []
+        // [人狼, 狂人, 占い, 霊媒師, 狩人] 
+        if (userNumer < 5) {
+            position_num_list = [1, 0, 0, 0, 0];
+        }else if (userNumer == 5) {
+            position_num_list = [1, 1, 0, 0, 0];
+        }else if (userNumer == 6) {
+            position_num_list = [1, 1, 1, 0, 0];
+        }else if (userNumer == 7) {
+            position_num_list = [2, 1, 1, 0, 1];
+        }else if (userNumer >= 8 && userNumer < 11) {
+            position_num_list = [2, 1, 1, 1, 1];
+        }else if (userNumer >= 11 && userNumer < 15) {
+            position_num_list = [3, 1, 1, 1, 1];
+        }else {
+            position_num_list = [4, 1, 1, 1, 1];
         }
-        return detectiveNumber;
-    }
-
-    async chooseSpNumber(): Promise<number> {
-        const userNumber: number = await this.getUserNumber();
-        let spNumber: number = 0;
-        if (userNumber > 6) {
-            spNumber = 1
-        }
-        return spNumber;
+        return position_num_list;
     }
 
     async updatePositions() {
-        const userNumber: number = await this.getUserNumber();
-        const guruNumber: number = 1;
-        const fanaticNumber: number = await this.chooseFanaticNumber();
-        // const fanaticNumber = 1;
-        const detectiveNumber: number = await this.chooseDetectiveNumber();
-        // const detectiveNumber = 1;
-        const spNumber: number = await this.chooseSpNumber();
-        let isDecided: boolean[] = [];
+        const userNumber = await this.getUserNumber();
+        const position_num_list = await this.makePositionsNumberList();
+        const werewolfNumber: number = position_num_list[0];
+        const madmanNumber: number = position_num_list[1];
+        const forecasterNumber: number = position_num_list[2];
+        const psychicNumber: number = position_num_list[3];
+        const hunterNumber: number = position_num_list[4];
+        const citizenNumber: number = userNumber - (werewolfNumber+madmanNumber+forecasterNumber+psychicNumber+hunterNumber);
+        let positions: string[] = [];
 
-        for (let i = 0; i < userNumber; i++) {
-            isDecided[i] = false;
+        for (let i=0; i < werewolfNumber; i++){
+            positions.push("人狼")
+        }
+        for (let i=0; i < madmanNumber; i++){
+            positions.push("狂人")
+        }
+        for (let i=0; i < forecasterNumber; i++){
+            positions.push("占い師")
+        }
+        for (let i=0; i < psychicNumber; i++){
+            positions.push("霊媒師")
+        }
+        for (let i=0; i < hunterNumber; i++){
+            positions.push("狩人")
+        }
+        for (let i=0; i < citizenNumber; i++){
+            positions.push("市民")
+        }
+        
+        // ランダム並べ替え
+        for(let i = positions.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = positions[i];
+            positions[i] = positions[j];
+            positions[j] = tmp;
         }
 
-        const positionNumbers: { [key: string]: number } = {
-            guru: guruNumber,
-            fanatic: fanaticNumber,
-            detective: detectiveNumber,
-            sp: spNumber
-        }
-
-        for (let k in positionNumbers) {
-            let undecided: number[] = [];
-            for (let i = 0; i < userNumber; i++) {
-                if (!isDecided[i]) { // まだ決まってなかったら
-                    undecided.push(i);
-                }
-            }
-
-            const indexes: number[] = await dabyss.getRandomIndexes(undecided, positionNumbers[k]);
-            for (let index of indexes) {
-                this.positions[index] = this.positionNames[k];
-                isDecided[index] = true;
-            }
-        }
-
-        for (let i = 0; i < userNumber; i++) {
-            if (!isDecided[i]) { // まだ決まってなかったら
-                this.positions[i] = this.positionNames.citizen;
-            }
-        }
-
+        this.position = positions
+        
         dabyss.dynamoUpdate(this.gameTable, this.gameKey, "positions", this.positions);
 
     }
@@ -199,119 +172,15 @@ export class Jinro extends dabyss.Game {
         return position;
     }
 
-    async updateGameMode(mode: string): Promise<void> {
-        this.gameMode = mode;
-        dabyss.dynamoUpdate(this.gameTable, this.gameKey, "game_mode", this.gameMode);
-    }
-
     async updateTalkType(type: number): Promise<void> {
         this.talkType = type;
         dabyss.dynamoUpdate(this.gameTable, this.gameKey, "talk_type", this.talkType);
     }
 
-    async switchZeroGuru(): Promise<void> {
-        this.zeroGuru = !(this.zeroGuru);
-        dabyss.dynamoUpdate(this.gameTable, this.gameKey, "zero_guru", this.zeroGuru);
-    }
-
-    async switchZeroDetective(): Promise<void> {
-        this.zeroDetective = !(this.zeroDetective);
-        dabyss.dynamoUpdate(this.gameTable, this.gameKey, "zero_detective", this.zeroDetective);
-    }
-
-    async updateDefaultBrainwashStatus(): Promise<void> {
-        const positions: string[] = this.positions;
-        for (let i = 0; i < positions.length; i++) {
-            if (positions[i] == this.positionNames.guru || positions[i] == this.positionNames.fanatic) {
-                this.brainwashStatus[i] = true;
-            } else {
-                this.brainwashStatus[i] = false;
-            }
-        }
-        dabyss.dynamoUpdate(this.gameTable, this.gameKey, "brainwash_status", this.brainwashStatus);
-    }
-
-    async isBrainwash(index: number): Promise<boolean> {
-        return this.brainwashStatus[index];
-    }
-
-    async getNotBrainwashedNumber() {
-        let res = 0;
-        for (let state of this.brainwashStatus) {
-            if (!state) {
-                res++;
-            }
-        }
-        return res;
-    }
-
-    async isBrainwashCompleted(): Promise<boolean> {
-        const notBrainwashed: number = await this.getNotBrainwashedNumber();
-        const res: boolean = (notBrainwashed <= 1);
-        return res;
-    }
-
-    async updateBrainwashStateTrue(index: number): Promise<void> {
-        this.brainwashStatus[index] = true;
-        dabyss.dynamoUpdate(this.gameTable, this.gameKey, "brainwash_status", this.brainwashStatus);
-    }
-
-
-    async chooseCrazinessId(type: number): Promise<number> {
-        const crazinessIds = await Craziness.getCrazinessIdsMatchType(type);
-        const index: number = Math.floor(Math.random() * crazinessIds.length);
-        return crazinessIds[index];
-    }
-
-    async updateDefaultCrazinessIds(): Promise<void> {
-        const userNumber = await this.getUserNumber();
-        for (let i = 0; i < userNumber; i++) {
-            this.crazinessIds[i] = [];
-            if (this.positions[i] == this.positionNames.fanatic) {
-                const crazinessId = await this.chooseCrazinessId(this.talkType);
-                this.crazinessIds[i].push(crazinessId);
-            }
-        }
-        dabyss.dynamoUpdate(this.gameTable, this.gameKey, "craziness_ids", this.crazinessIds);
-    }
-
-    async updateDefaultCrazinessIdsInDemo(): Promise<void> {
-        const userNumber = await this.getUserNumber();
-        for (let i = 0; i < userNumber; i++) {
-            this.crazinessIds[i] = [];
-
-            const crazinessId = await this.chooseCrazinessId(this.talkType);
-            this.crazinessIds[i].push(crazinessId);
-        }
-        dabyss.dynamoUpdate(this.gameTable, this.gameKey, "craziness_ids", this.crazinessIds);
-    }
-
-    async addCrazinessId(index: number): Promise<void> {
-        let status: boolean = false;
-
-        LOOP: while (!status) {
-            const crazinessId: number = await this.chooseCrazinessId(this.talkType);
-            for (let j = 0; j < this.crazinessIds[index].length; j++) {
-                if (this.crazinessIds[index][j] == crazinessId) {
-                    continue LOOP;
-                }
-            }
-            this.crazinessIds[index].push(crazinessId);
-            status = true;
-        }
-
-        dabyss.dynamoUpdate(this.gameTable, this.gameKey, "craziness_ids", this.crazinessIds);
-    }
-
-    async isGuru(index: number): Promise<boolean> {
-        const res: boolean = (this.positions[index] == this.positionNames.guru);
-        return res;
-    }
-
     async getWinnerIndexes() {
         let res: number[] = [];
         for (let i = 0; i < this.positions.length; i++) {
-            if (this.winner == "guru") { // 教団陣営勝利なら
+            if (this.winner == "werewolf") { // 教団陣営勝利なら
                 if (this.positions[i] == this.positionNames.guru || this.positions[i] == this.positionNames.fanatic) {
                     res.push(i);
                 }
