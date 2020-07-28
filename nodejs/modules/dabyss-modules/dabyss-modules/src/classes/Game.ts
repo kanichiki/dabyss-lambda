@@ -12,7 +12,10 @@ const games: any = {
     },
     "クレイジーノイジー": {
         minNumber: 2
-    }
+    },
+    "人狼": {
+        minNumber: 2
+    },
 };
 
 /**
