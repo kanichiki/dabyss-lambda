@@ -2,6 +2,7 @@ import line = require('@line/bot-sdk');
 import jinro_module = require('jinro');
 import dabyss = require('dabyss');
 
+
 process.on('uncaughtException', function (err) {
     console.log(err);
 });
