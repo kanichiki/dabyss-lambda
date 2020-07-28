@@ -35,16 +35,14 @@ exports.handler = async (event: any, context: any): Promise<void> => {
             const confirmsState: boolean = await jinro.action.isActedUser(userIndex);
             if (!confirmsState) {
                 const position: string = await jinro.getPosition(userIndex);
-                const zeroWerewolf: boolean = jinro.zeroWerewolf;
-                const zeroForecaster: boolean = jinro.zeroForecaster;
-
-                if (position == jinro.positionNames.werewolf && zeroWerewolf) {
+                
+                if (position == jinro.positionNames.werewolf && false) {
                     const targetExists = await jinro.existsUserIndexExceptOneself(userIndex, targetIndex);
                     if (targetExists) {
                         await replyBasicAction(jinro, position, userIndex, targetIndex, replyToken);
                     }
 
-                } else if (position == jinro.positionNames.forecaster && zeroForecaster) {
+                } else if (position == jinro.positionNames.forecaster) {
                     const targetExists = await jinro.existsUserIndexExceptOneself(userIndex, targetIndex);
                     if (targetExists) {
 

@@ -2,7 +2,7 @@ import line = require('@line/bot-sdk');
 import dabyss = require('dabyss');
 import jinro_module = require('jinro');
 
-export const main = async (displayName: string, position: string, targetDisplayNames: string[], targetUserIndexes: number[], zeroWerewolf: boolean, zeroForecaster: boolean): Promise<line.Message[]> => {
+export const main = async (displayName: string, position: string, targetDisplayNames: string[], targetUserIndexes: number[]): Promise<line.Message[]> => {
     let actionMessage: string = "";
     let targetMessages: line.FlexComponent[] = [
         {
@@ -10,22 +10,10 @@ export const main = async (displayName: string, position: string, targetDisplayN
         }
     ]
 
-    if (position == jinro_module.werewolf && zeroWerewolf) {
-
-        actionMessage = "噛む人を選んでください";
-        for (let i = 0; i < targetDisplayNames.length; i++) {
-            const targetMessage: line.FlexButton = {
-                "type": "button",
-                "action": {
-                    "type": "postback",
-                    "label": targetDisplayNames[i],
-                    "data": targetUserIndexes[i].toString()
-                },
-                "color": dabyss.mainColor
-            }
-            targetMessages.push(targetMessage);
-        }
-    } else if (position == jinro_module.forecaster && zeroForecaster) {
+    if (position == jinro_module.werewolf) {
+        actionMessage = "初日は襲撃できません";
+        
+    } else if (position == jinro_module.forecaster) {
 
         actionMessage = "占う人を選んでください";
         for (let i = 0; i < targetDisplayNames.length; i++) {

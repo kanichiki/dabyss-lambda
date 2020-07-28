@@ -62,10 +62,10 @@ exports.handler = async (event: any, context: any): Promise<void> => {
                         changeSetting = "timer";
                         break;
                     case "0日目襲撃有無":
-                        changeSetting = "zeroWerewolf";
+                        changeSetting = "なし";
                         break;
                     case "0日目占い有無":
-                        changeSetting = "zeroForecaster";
+                        changeSetting = "あり";
                         break;
                 }
                 if (changeSetting != "") {
@@ -88,7 +88,7 @@ exports.handler = async (event: any, context: any): Promise<void> => {
 
     if (status == "winner") {
         // すべての結果発表がまだなら
-        if (text == "役職・狂気を見る") {
+        if (text == "役職を見る") {
             await replyAnnounceResult(jinro, replyToken);
         }
     }
@@ -141,14 +141,6 @@ const replySettingChange = async (jinro: jinro_module.Jinro, setting: string, re
         const replyMessage = await import("./template/replyTimerChange");
         promises.push(dabyss.replyMessage(replyToken, await replyMessage.main()));
     }
-    if (setting == "zeroWerewolf") {
-        await jinro.switchZeroWerewolf();
-        promises.push(replyConfirm(jinro, replyToken));
-    }
-    if (setting == "zeroForecaster") {
-        await jinro.switchZeroForecaster();
-        promises.push(replyConfirm(jinro, replyToken));
-    }
 
     await Promise.all(promises);
     return;
@@ -160,11 +152,9 @@ const replyConfirm = async (jinro: jinro_module.Jinro, replyToken: string): Prom
     const userNumber = await jinro.getUserNumber();
     const type = jinro.talkType;
     const timer = await jinro.getTimerString();
-    const zeroWerewolf = jinro.zeroWerewolf;
-    const zeroForecaster = jinro.zeroForecaster;
 
     const replyMessage = await import("./template/replyChanged");
-    promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(userNumber, type, timer, zeroWerewolf, zeroForecaster)));
+    promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(userNumber, type, timer)));
 
     await Promise.all(promises);
     return;
@@ -184,8 +174,6 @@ const replyConfirmYes = async (jinro: jinro_module.Jinro, replyToken: string): P
     const displayNames = await jinro.getDisplayNames();
     const positions = jinro.positions;
     const userNumber = await jinro.getUserNumber();
-    const zeroWerewolf = jinro.zeroWerewolf;
-    const zeroForecaster = jinro.zeroForecaster;
 
     promises.push(jinro.putZeroAction());
 
