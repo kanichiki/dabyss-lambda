@@ -164,7 +164,6 @@ export class Jinro extends dabyss.Game {
         this.position = positions
         
         dabyss.dynamoUpdate(this.gameTable, this.gameKey, "positions", this.positions);
-
     }
 
     async getPosition(userIndex: number): Promise<string> {
@@ -180,7 +179,7 @@ export class Jinro extends dabyss.Game {
     async getWinnerIndexes() {
         let res: number[] = [];
         for (let i = 0; i < this.positions.length; i++) {
-            if (this.winner == "werewolf") { // 教団陣営勝利なら
+            if (this.winner == "werewolf") { // 人狼陣営勝利なら
                 if (this.positions[i] == this.positionNames.guru || this.positions[i] == this.positionNames.fanatic) {
                     res.push(i);
                 }

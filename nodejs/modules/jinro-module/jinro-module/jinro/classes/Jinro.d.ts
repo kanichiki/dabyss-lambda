@@ -13,10 +13,6 @@ export declare class Jinro extends dabyss.Game {
         [key: string]: string;
     };
     talkType: number;
-    zeroDetective: boolean;
-    zeroWerewolf: boolean;
-    brainwashStatus: boolean[];
-    crazinessIds: number[][];
     /**
      * Jinroインスタンス作成
      *

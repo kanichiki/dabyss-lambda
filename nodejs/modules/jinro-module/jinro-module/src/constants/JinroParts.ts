@@ -275,17 +275,13 @@ export const timerMessage = async (): Promise<line.FlexBubble> => {
   }
 }
 
-export const positionNumberMessage = async (userNumber: number, numberOption: number): Promise<line.FlexBubble> => {
-  let detectiveNumber = ""
-  let citizenNumber = ""
-
-  if (userNumber > 6) {
-    detectiveNumber = "1";
-    citizenNumber = `${userNumber - numberOption - 2}~${userNumber - numberOption - 1}`
-  } else {
-    detectiveNumber = `0~1`
-    citizenNumber = `${userNumber - numberOption * 2 - 1}~${userNumber - numberOption * 2 + 1}`
-  }
+export const positionNumberMessage = async (userNumber: number, position_num_list: number[]): Promise<line.FlexBubble> => {
+  const werewolfNumber: number = position_num_list[0];
+  const madmanNumber: number = position_num_list[1];
+  const forecasterNumber: number = position_num_list[2];
+  const psychicNumber: number = position_num_list[3];
+  const hunterNumber: number = position_num_list[4];
+  const citizenNumber: number = userNumber - (werewolfNumber+madmanNumber+forecasterNumber+psychicNumber+hunterNumber);
 
   return {
     "type": "bubble",
@@ -310,11 +306,19 @@ export const positionNumberMessage = async (userNumber: number, numberOption: nu
         },
         {
           "type": "text",
-          "text": `狂信者 : ${numberOption - 1}~${numberOption}人`
+          "text": `狂人 : ${madmanNumber}人`
         },
         {
           "type": "text",
-          "text": `探偵 : ${detectiveNumber}人`
+          "text": `占い師 : ${forecasterNumber}}人`
+        },
+        {
+          "type": "text",
+          "text": `霊媒師 : ${psychicNumber}}人`
+        },
+        {
+          "type": "text",
+          "text": `狩人 : ${hunterNumber}}人`
         },
         {
           "type": "text",
