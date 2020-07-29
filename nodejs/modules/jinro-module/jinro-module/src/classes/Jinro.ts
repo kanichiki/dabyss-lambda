@@ -17,6 +17,7 @@ export class Jinro extends dabyss.Game {
     positionNames: { [key: string]: string };
 
     talkType: number;
+    isAlive: boolean[];
 
     /**
      * Jinroインスタンス作成
@@ -41,6 +42,7 @@ export class Jinro extends dabyss.Game {
         }
 
         this.talkType = -1;
+        this.isAlive = [];
     }
 
 
