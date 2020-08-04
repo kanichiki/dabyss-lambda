@@ -73,8 +73,8 @@ class Jinro extends dabyss.Game {
                             if (game.positions) {
                                 this.positions = game.positions;
                             }
-                            if (game.brainwash_status) {
-                                this.aliveStatus = game.brainwash_status;
+                            if (game.alive_status) {
+                                this.aliveStatus = game.alive_status;
                             }
                         }
                     }

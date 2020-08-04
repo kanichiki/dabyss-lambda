@@ -168,7 +168,7 @@ const replyConfirmYes = async (jinro: jinro_module.Jinro, replyToken: string): P
 
     await jinro.updatePositions();
 
-    promises.push(jinro.updateDefaultBrainwashStatus()); // 洗脳ステータスを初期配置
+    promises.push(jinro.updateDefaultAliveStatus()); // 生死ステータスを初期配置
     promises.push(jinro.updateDefaultPositionConfirmStatus()); // 役職確認ステータスを全員false
 
     const userIds = jinro.userIds;
@@ -183,13 +183,13 @@ const replyConfirmYes = async (jinro: jinro_module.Jinro, replyToken: string): P
         const targetUserIndexes = await jinro.getUserIndexesExceptOneself(i);
 
         const pushPosition = await import("./template/pushUserPosition");
-        promises.push(dabyss.pushMessage(userIds[i], await pushPosition.main(displayNames[i], positions[i], targetDisplayNames, targetUserIndexes, zeroWerewolf, zeroForecaster)));
+        promises.push(dabyss.pushMessage(userIds[i], await pushPosition.main(displayNames[i], positions[i], targetDisplayNames, targetUserIndexes)));
     }
 
     const numberOption = Math.floor((userNumber - 1) / 3);
 
     const replyMessage = await import("./template/replyConfirmYes");
-    promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(userNumber, numberOption)));
+    promises.push(dabyss.replyMessage(replyToken, await replyMessage.main(userNumber, werewolfNumber, forecasterNumber, psychicNumber, hunterNumber, madmanNumber)));
 
     await Promise.all(promises);
     return;
