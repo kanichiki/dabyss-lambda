@@ -135,40 +135,21 @@ const replyPositionConfirm = async (jinro: jinro_module.Jinro, userIndex: number
 const replyActionCompleted = async (jinro: jinro_module.Jinro): Promise<void> => {
     const promises: Promise<void>[] = [];
 
-    const pushCraziness = await import("./template/pushUserCraziness");
-
-    const brainwashTarget = await jinro.getTargetOfPosition(jinro.positionNames.werewolf);
+    const biteTarget = await jinro.getTargetOfPosition(jinro.positionNames.werewolf);
     const spTarget = await jinro.getTargetOfPosition(jinro.positionNames.sp);
-    if (brainwashTarget != -1 && brainwashTarget != spTarget) {
-        promises.push(jinro.updateBrainwashStateTrue(brainwashTarget));
-        await jinro.addCrazinessId(brainwashTarget);
-
+    if (biteTarget != -1 && biteTarget != spTarget) {
+        promises.push(jinro.updateAliveStateFalse(biteTarget));
     }
 
     const userNumber = await jinro.getUserNumber();
 
-    for (let i = 0; i < userNumber; i++) {
-        if (jinro.crazinessIds[i][0] != null) {
-            let contents = [];
-            let remarks = [];
-            for (let crazinessId of jinro.crazinessIds[i]) {
-
-                const craziness = await jinro.Craziness.createInstance(crazinessId);
-
-                contents.push(craziness.content);
-                remarks.push(craziness.remark);
-
-            }
-            promises.push(dabyss.pushMessage(jinro.userIds[i], await pushCraziness.main(contents, remarks)));
-        }
-    }
 
     await jinro.updateDay(); // 日付更新
     const pushDay = await import("./template/pushDay");
     let pushMessage = await pushDay.main(jinro.day);
 
-    const isBrainwashCompleted = await jinro.isBrainwashCompleted();
-    if (!isBrainwashCompleted || jinro.day == 1) { // ゲームが続く場合
+    const isDeadCompleted = await jinro.isDeadCompleted();
+    if (!isDeadCompleted || jinro.day == 1) { // ゲームが続く場合
         const timer = await jinro.getTimerString(); // タイマー設定を取得
 
         const pushFinishActions = await import("./template/pushFinishActions");
@@ -181,7 +162,7 @@ const replyActionCompleted = async (jinro: jinro_module.Jinro): Promise<void> =>
 
         promises.push(dabyss.pushMessage(jinro.groupId, pushMessage));
 
-    } else { // 洗脳が完了したら
+    } else { // 襲撃が完了したら
         await jinro.updateGameStatus("winner"); // 勝者発表状況をtrueにする
         const isWinnerWerewolf = true;
         const winnerIndexes = await jinro.getWinnerIndexes();

@@ -125,12 +125,12 @@ const replyVoteSuccess = async (jinro: jinro_module.Jinro, votedUserIndex: numbe
             if (!isWerewolf) { // 最多得票者が教祖じゃなかった場合
                 replyMessage = replyMessage.concat(await replyExecutorIsNotWerewolf(jinro, executorDisplayName, mostVotedUserIndex));
 
-                const isBrainwashCompleted = await jinro.isBrainwashCompleted();
-                if (!isBrainwashCompleted) {
+                const isDeadCompleted = await jinro.isDeadCompleted();
+                if (!isDeadCompleted) {
 
                     replyMessage = replyMessage.concat(await replyVoteFinish(jinro));
 
-                } else { // 洗脳が完了したら
+                } else { // 死亡が完了したら
                     replyMessage = replyMessage.concat(await replyBrainwashCompleted(jinro));
                 }
             } else { // 最多得票者が教祖だった場合
