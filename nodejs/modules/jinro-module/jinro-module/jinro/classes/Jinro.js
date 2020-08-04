@@ -182,18 +182,6 @@ class Jinro extends dabyss.Game {
             dabyss.dynamoUpdate(this.gameTable, this.gameKey, "talk_type", this.talkType);
         });
     }
-    switchZeroWerewolf() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.zeroWerewolf = !(this.zeroWerewolf);
-            dabyss.dynamoUpdate(this.gameTable, this.gameKey, "zero_werewolf", this.zeroWerewolf);
-        });
-    }
-    switchZeroDetective() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.zeroDetective = !(this.zeroDetective);
-            dabyss.dynamoUpdate(this.gameTable, this.gameKey, "zero_detective", this.zeroDetective);
-        });
-    }
     updateDefaultAliveStatus() {
         return __awaiter(this, void 0, void 0, function* () {
             const positions = this.positions;
