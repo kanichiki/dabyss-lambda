@@ -34,16 +34,14 @@ class Jinro extends dabyss.Game {
         this.defaultSettingStatus = [false, false, true];
         this.positionNames = {
             werewolf: "人狼",
-            madman: "狂信者",
-            detective: "探偵",
+            madman: "狂人",
+            forecaster: "占い師",
             citizen: "市民",
-            sp: "用心棒"
+            psychic: "霊媒師",
+            hunter: "狩人"
         };
         this.talkType = -1;
-        this.zeroDetective = false;
-        this.zeroWerewolf = false;
-        this.brainwashStatus = [];
-        this.crazinessIds = [];
+        this.aliveStatus = [];
     }
     /**
      * 初期化
@@ -72,16 +70,11 @@ class Jinro extends dabyss.Game {
                             this.settingStatus = game.setting_status;
                             this.timer = game.timer;
                             this.talkType = game.talk_type;
-                            this.zeroDetective = game.zero_detective;
-                            this.zeroWerewolf = game.zero_werewolf;
                             if (game.positions) {
                                 this.positions = game.positions;
                             }
                             if (game.brainwash_status) {
-                                this.brainwashStatus = game.brainwash_status;
-                            }
-                            if (game.craziness_ids) {
-                                this.crazinessIds = game.craziness_ids;
+                                this.aliveStatus = game.brainwash_status;
                             }
                         }
                     }
@@ -201,29 +194,24 @@ class Jinro extends dabyss.Game {
             dabyss.dynamoUpdate(this.gameTable, this.gameKey, "zero_detective", this.zeroDetective);
         });
     }
-    updateDefaultBrainwashStatus() {
+    updateDefaultAliveStatus() {
         return __awaiter(this, void 0, void 0, function* () {
             const positions = this.positions;
             for (let i = 0; i < positions.length; i++) {
-                if (positions[i] == this.positionNames.werewolf || positions[i] == this.positionNames.madman) {
-                    this.brainwashStatus[i] = true;
-                }
-                else {
-                    this.brainwashStatus[i] = false;
-                }
+                this.aliveStatus[i] = false;
             }
-            dabyss.dynamoUpdate(this.gameTable, this.gameKey, "brainwash_status", this.brainwashStatus);
+            dabyss.dynamoUpdate(this.gameTable, this.gameKey, "alive_status", this.aliveStatus);
         });
     }
-    isBrainwash(index) {
+    isAlive(index) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.brainwashStatus[index];
+            return this.aliveStatus[index];
         });
     }
-    getNotBrainwashedNumber() {
+    getAliveNumber() {
         return __awaiter(this, void 0, void 0, function* () {
             let res = 0;
-            for (let state of this.brainwashStatus) {
+            for (let state of this.aliveStatus) {
                 if (!state) {
                     res++;
                 }
@@ -231,64 +219,17 @@ class Jinro extends dabyss.Game {
             return res;
         });
     }
-    isBrainwashCompleted() {
+    isDeadCompleted() {
         return __awaiter(this, void 0, void 0, function* () {
-            const notBrainwashed = yield this.getNotBrainwashedNumber();
-            const res = (notBrainwashed <= 1);
+            const alive_num = yield this.getAliveNumber();
+            const res = (alive_num <= 1);
             return res;
         });
     }
-    updateBrainwashStateTrue(index) {
+    updateAliveStateFalse(index) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.brainwashStatus[index] = true;
-            dabyss.dynamoUpdate(this.gameTable, this.gameKey, "brainwash_status", this.brainwashStatus);
-        });
-    }
-    chooseCrazinessId(type) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const crazinessIds = yield Craziness_1.Craziness.getCrazinessIdsMatchType(type);
-            const index = Math.floor(Math.random() * crazinessIds.length);
-            return crazinessIds[index];
-        });
-    }
-    updateDefaultCrazinessIds() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userNumber = yield this.getUserNumber();
-            for (let i = 0; i < userNumber; i++) {
-                this.crazinessIds[i] = [];
-                if (this.positions[i] == this.positionNames.madman) {
-                    const crazinessId = yield this.chooseCrazinessId(this.talkType);
-                    this.crazinessIds[i].push(crazinessId);
-                }
-            }
-            dabyss.dynamoUpdate(this.gameTable, this.gameKey, "craziness_ids", this.crazinessIds);
-        });
-    }
-    updateDefaultCrazinessIdsInDemo() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userNumber = yield this.getUserNumber();
-            for (let i = 0; i < userNumber; i++) {
-                this.crazinessIds[i] = [];
-                const crazinessId = yield this.chooseCrazinessId(this.talkType);
-                this.crazinessIds[i].push(crazinessId);
-            }
-            dabyss.dynamoUpdate(this.gameTable, this.gameKey, "craziness_ids", this.crazinessIds);
-        });
-    }
-    addCrazinessId(index) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let status = false;
-            LOOP: while (!status) {
-                const crazinessId = yield this.chooseCrazinessId(this.talkType);
-                for (let j = 0; j < this.crazinessIds[index].length; j++) {
-                    if (this.crazinessIds[index][j] == crazinessId) {
-                        continue LOOP;
-                    }
-                }
-                this.crazinessIds[index].push(crazinessId);
-                status = true;
-            }
-            dabyss.dynamoUpdate(this.gameTable, this.gameKey, "craziness_ids", this.crazinessIds);
+            this.aliveStatus[index] = false;
+            dabyss.dynamoUpdate(this.gameTable, this.gameKey, "alive_status", this.aliveStatus);
         });
     }
     isWerewolf(index) {
