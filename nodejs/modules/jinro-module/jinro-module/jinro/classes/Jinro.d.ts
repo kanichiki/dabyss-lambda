@@ -46,15 +46,11 @@ export declare class Jinro extends dabyss.Game {
     updateTalkType(type: number): Promise<void>;
     switchZeroWerewolf(): Promise<void>;
     switchZeroDetective(): Promise<void>;
-    updateDefaultBrainwashStatus(): Promise<void>;
-    isBrainwash(index: number): Promise<boolean>;
-    getNotBrainwashedNumber(): Promise<number>;
-    isBrainwashCompleted(): Promise<boolean>;
-    updateBrainwashStateTrue(index: number): Promise<void>;
-    chooseCrazinessId(type: number): Promise<number>;
-    updateDefaultCrazinessIds(): Promise<void>;
-    updateDefaultCrazinessIdsInDemo(): Promise<void>;
-    addCrazinessId(index: number): Promise<void>;
+    updateDefaultAliveStatus(): Promise<void>;
+    isAlive(index: number): Promise<boolean>;
+    getAliveNumber(): Promise<number>;
+    isDeadCompleted(): Promise<boolean>;
+    updateAliveStateFalse(index: number): Promise<void>;
     isWerewolf(index: number): Promise<boolean>;
     getWinnerIndexes(): Promise<number[]>;
 }
