@@ -24,7 +24,7 @@ export const main = async (executorDisplayName: string): Promise<line.Message[]>
                 },
                 {
                   "type": "span",
-                  "text": "さんは教祖ではなかったようですが、拷問の結果気が狂ってしまいました"
+                  "text": "さんは処刑されて死んでしまいました"
                 }
               ],
               "size": "lg"

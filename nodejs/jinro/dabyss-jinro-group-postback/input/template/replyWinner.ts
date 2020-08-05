@@ -11,9 +11,9 @@ export const main = async (displayNames: string[], isWinnerWerewolf: boolean, wi
   let message2 = "";
   if (isWinnerWerewolf) {
     message1 = "狂ってない人が1人以下になりました"
-    message2 = "教団陣営の勝利です！！"
+    message2 = "人狼陣営の勝利です！！"
   } else {
-    message1 = "教祖の正体を暴きました"
+    message1 = "平和な村が戻ってきました"
     message2 = "市民陣営の勝利です！！"
   }
 
@@ -61,8 +61,8 @@ export const main = async (displayNames: string[], isWinnerWerewolf: boolean, wi
               "type": "button",
               "action": {
                 "type": "message",
-                "label": "役職・狂気を見る",
-                "text": "役職・狂気を見る"
+                "label": "役職を見る",
+                "text": "役職を見る"
               },
               "color": "#E83b10"
             }

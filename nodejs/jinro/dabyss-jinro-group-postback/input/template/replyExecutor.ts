@@ -5,7 +5,7 @@ export const main = async (executorDisplayName: string): Promise<line.Message[]>
     return [
         {
             type: "text",
-            text: `${executorDisplayName}さんが拷問にかけられました`
+            text: `${executorDisplayName}さんが処刑されました`
         }
     ]
 }
