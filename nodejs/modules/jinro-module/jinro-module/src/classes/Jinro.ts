@@ -163,7 +163,7 @@ export class Jinro extends dabyss.Game {
             positions[j] = tmp;
         }
 
-        this.position = positions
+        this.positions = positions
         
         dabyss.dynamoUpdate(this.gameTable, this.gameKey, "positions", this.positions);
     }
@@ -182,11 +182,11 @@ export class Jinro extends dabyss.Game {
         let res: number[] = [];
         for (let i = 0; i < this.positions.length; i++) {
             if (this.winner == "werewolf") { // 人狼陣営勝利なら
-                if (this.positions[i] == this.positionNames.guru || this.positions[i] == this.positionNames.fanatic) {
+                if (this.positions[i] == this.positionNames.werewolf || this.positions[i] == this.positionNames.madman) {
                     res.push(i);
                 }
             } else { // 市民陣営勝利なら
-                if (this.positions[i] == this.positionNames.detective || this.positions[i] == this.positionNames.citizen || this.positionNames.sp) {
+                if (this.positions[i] == this.positionNames.forecaster || this.positions[i] == this.positionNames.psychic || this.positionNames.hunter) {
                     res.push(i);
                 }
             }
