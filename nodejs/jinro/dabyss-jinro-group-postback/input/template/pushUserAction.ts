@@ -2,7 +2,7 @@ import line = require('@line/bot-sdk');
 import dabyss = require('dabyss');
 import jinro_module = require('jinro');
 
-export const main = async (displayName: string, position: string, isBrainwash: boolean, targetDisplayNames: string[], targetUserIndexes: number[]): Promise<line.Message[]> => {
+export const main = async (displayName: string, position: string, isAlive: boolean, targetAliveDisplayNames: string[], targetDeadDisplayNames: string[],targetUserIndexes: number[]): Promise<line.Message[]> => {
     let actionMessage = "";
     let targetMessages: line.FlexComponent[] = [
         {
@@ -10,32 +10,56 @@ export const main = async (displayName: string, position: string, isBrainwash: b
         }
     ]
 
-    if (position == jinro_module.werewolf || position == jinro_module.forecaster) {
-        if (position == jinro_module.werewolf) {
+    if (position == jinro_module.werewolf) {
+        if (!isAlive) {
+            actionMessage = "死んでいるため行動できません";
+        } else {
             actionMessage = "噛む人を選んでください";
-            for (let i = 0; i < targetDisplayNames.length; i++) {
+            for (let i = 0; i < targetAliveDisplayNames.length; i++) {
                 const targetMessage: line.FlexButton = {
                     "type": "button",
                     "action": {
                         "type": "postback",
-                        "label": targetDisplayNames[i],
+                        "label": targetAliveDisplayNames[i],
+                        "data": targetUserIndexes[i].toString()
+                    },
+                    "color": dabyss.mainColor
+                }
+                targetMessages.push(targetMessage);
+            }    
+        }
+    } else if(position == jinro_module.forecaster) {
+        if (!isAlive) {
+            actionMessage = "死んでいるため行動できません";
+        } else {
+            actionMessage = "占う人を選んでください";
+            for (let i = 0; i < targetAliveDisplayNames.length; i++) {
+                const targetMessage: line.FlexButton = {
+                    "type": "button",
+                    "action": {
+                        "type": "postback",
+                        "label": targetAliveDisplayNames[i],
                         "data": targetUserIndexes[i].toString()
                     },
                     "color": dabyss.mainColor
                 }
                 targetMessages.push(targetMessage);
             }
+        }
+    } else if(position == jinro_module.psychic) {
+        if (!isAlive) {
+            actionMessage = "死んでいるため行動できません";
         } else {
-            if (isBrainwash) {
-                actionMessage = "死んでいるため占えません";
+            if (!targetDeadDisplayNames) {
+                actionMessage = "死んでいる人がいないため、霊媒できません"
             } else {
-                actionMessage = "占う人を選んでください";
-                for (let i = 0; i < targetDisplayNames.length; i++) {
+                actionMessage = "霊媒先を選んでください";
+                for (let i = 0; i < targetDeadDisplayNames.length; i++) {
                     const targetMessage: line.FlexButton = {
                         "type": "button",
                         "action": {
                             "type": "postback",
-                            "label": targetDisplayNames[i],
+                            "label": targetDeadDisplayNames[i],
                             "data": targetUserIndexes[i].toString()
                         },
                         "color": dabyss.mainColor
@@ -44,7 +68,28 @@ export const main = async (displayName: string, position: string, isBrainwash: b
                 }
             }
         }
-
+    } else if(position == jinro_module.hunter) {
+        if (!isAlive) {
+            actionMessage = "死んでいるため行動できません";
+        } else {
+            if (!targetDeadDisplayNames) {
+                actionMessage = "だれも守るひとがいません"
+            } else {
+                actionMessage = "守るひとを選んでください";
+                for (let i = 0; i < targetAliveDisplayNames.length; i++) {
+                    const targetMessage: line.FlexButton = {
+                        "type": "button",
+                        "action": {
+                            "type": "postback",
+                            "label": targetAliveDisplayNames[i],
+                            "data": targetUserIndexes[i].toString()
+                        },
+                        "color": dabyss.mainColor
+                    }
+                    targetMessages.push(targetMessage);
+                }
+            }
+        }
     } else {
         actionMessage = "アクションはありません";
     }
