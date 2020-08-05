@@ -49,7 +49,7 @@ export declare class Jinro extends dabyss.Game {
     updateDefaultAliveStatus(): Promise<void>;
     isAlive(index: number): Promise<boolean>;
     getAliveNumber(): Promise<number>;
-    isDeadCompleted(): Promise<boolean>;
+    isBiteCompleted(): Promise<boolean>;
     updateAliveStateFalse(index: number): Promise<void>;
     isWerewolf(index: number): Promise<boolean>;
     getWinnerIndexes(): Promise<number[]>;
