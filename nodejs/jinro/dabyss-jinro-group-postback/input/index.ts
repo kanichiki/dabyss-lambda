@@ -131,7 +131,7 @@ const replyVoteSuccess = async (jinro: jinro_module.Jinro, votedUserIndex: numbe
                     replyMessage = replyMessage.concat(await replyVoteFinish(jinro));
 
                 } else { // 死亡が完了したら
-                    replyMessage = replyMessage.concat(await replyBrainwashCompleted(jinro));
+                    replyMessage = replyMessage.concat(await replyBiteCompleted(jinro));
                 }
             } else { // 最多得票者が教祖だった場合
                 replyMessage = replyMessage.concat(await replyCitizenWin(jinro));
@@ -162,13 +162,13 @@ const replyVoteSuccess = async (jinro: jinro_module.Jinro, votedUserIndex: numbe
                 if (!isWerewolf) { // 最多得票者が教祖じゃなかった場合
                     replyMessage = replyMessage.concat(await replyExecutorIsNotWerewolf(jinro, executorDisplayName, executorIndex));
 
-                    const isBrainwashCompleted = await jinro.isBrainwashCompleted();
-                    if (!isBrainwashCompleted) {
+                    const isDeadCompleted = await jinro.isDeadCompleted();
+                    if (!isDeadCompleted) {
 
                         replyMessage = replyMessage.concat(await replyVoteFinish(jinro));
 
                     } else { // 洗脳が完了したら
-                        replyMessage = replyMessage.concat(await replyBrainwashCompleted(jinro));
+                        replyMessage = replyMessage.concat(await replyBiteCompleted(jinro));
                     }
                 } else { // 最多得票者が教祖だった場合
                     replyMessage = replyMessage.concat(await replyCitizenWin(jinro));
@@ -184,7 +184,7 @@ const replyVoteSuccess = async (jinro: jinro_module.Jinro, votedUserIndex: numbe
 
 const replyExecutorIsNotWerewolf = async (jinro: jinro_module.Jinro, executorDisplayName: string, executorIndex: number): Promise<line.Message[]> => {
     const promises: Promise<void>[] = [];
-    await jinro.updateBrainwashStateTrue(executorIndex); // 最多投票者洗脳
+    await jinro.updateAliveStateFalse(executorIndex); // 最多投票者洗脳
     promises.push(jinro.addCrazinessId(executorIndex)); // 最多投票者狂気追加
     const replyExecutorIsNotWerewolf = await import("./template/replyExecutorIsNotWerewolf");
     const replyExecutorIsNotWerewolfMessage = await replyExecutorIsNotWerewolf.main(executorDisplayName);
@@ -204,10 +204,10 @@ const replyVoteFinish = async (jinro: jinro_module.Jinro): Promise<line.Message[
         const targetDisplayNames = await jinro.getDisplayNamesExceptOneself(i);
         const targetIndexes = await jinro.getUserIndexesExceptOneself(i);
 
-        const isBrainwash = await jinro.isBrainwash(i);
+        const isAlive = await jinro.isAlive(i);
 
         const pushUserAction = await import("./template/pushUserAction");
-        promises.push(dabyss.pushMessage(jinro.userIds[i], await pushUserAction.main(displayNames[i], jinro.positions[i], isBrainwash, targetDisplayNames, targetIndexes)));
+        promises.push(dabyss.pushMessage(jinro.userIds[i], await pushUserAction.main(displayNames[i], jinro.positions[i], !(isAlive), targetDisplayNames, targetIndexes)));
     }
 
     const replyVoteFinish = await import("./template/replyVoteFinish");
@@ -216,7 +216,7 @@ const replyVoteFinish = async (jinro: jinro_module.Jinro): Promise<line.Message[
     return replyVoteFinishMessage;
 }
 
-const replyBrainwashCompleted = async (jinro: jinro_module.Jinro): Promise<line.Message[]> => {
+const replyBiteCompleted = async (jinro: jinro_module.Jinro): Promise<line.Message[]> => {
     await jinro.updateGameStatus("winner");
     await jinro.updateWinner("werewolf");
     const winnerIndexes = await jinro.getWinnerIndexes();
