@@ -10,10 +10,10 @@ export const main = async (displayNames: string[], isWinnerWerewolf: boolean, wi
   let message1 = ""
   let message2 = "";
   if (isWinnerWerewolf) {
-    message1 = "市民側が1人以下になりました"
+    message1 = "人狼の数が市民の数と並びました"
     message2 = "人狼陣営の勝利です！！"
   } else {
-    message1 = "人狼がいなくなりました"
+    message1 = "すべての人狼を処刑しました"
     message2 = "市民陣営の勝利です！！"
   }
 
