@@ -180,7 +180,7 @@ export class Jinro extends dabyss.Game {
 
     async updateDefaultAliveStatus(): Promise<void> {
         const positions: string[] = this.positions;
-        for (let i = 0: i < positions.length; i++) {
+        for (let i = 0; i < positions.length; i++) {
             this.isAliveStatus[i] = true;
         }
         dabyss.dynamoUpdate(this.gameTable, this.gameKey, "is_alive_status", this.isAliveStatus);
@@ -189,7 +189,17 @@ export class Jinro extends dabyss.Game {
     async isAlive(index: number): Promise<boolean> {
         return this.isAliveStatus[index];
     }
+
+    async Die(index: number): Promise<void> {
+        this.isAliveStatus[index] = true;
+        dabyss.dynamoUpdate(this.gameTable, this.gameKey, "is_alive_status", this.isAliveStatus);
+    }
     
+    async isWerewolf(index: number): Promise<boolean> {
+        const res: boolean = (this.positions[index] == this.positionNames.werewolf);
+        return res;
+    }
+
     async getWinnerIndexes() {
         let res: number[] = [];
         for (let i = 0; i < this.positions.length; i++) {

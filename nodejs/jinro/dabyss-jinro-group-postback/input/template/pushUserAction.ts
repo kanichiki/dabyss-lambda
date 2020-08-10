@@ -72,7 +72,7 @@ export const main = async (displayName: string, position: string, isAlive: boole
         if (!isAlive) {
             actionMessage = "死んでいるため行動できません";
         } else {
-            if (!targetDeadDisplayNames) {
+            if (!targetAliveDisplayNames) {
                 actionMessage = "だれも守るひとがいません"
             } else {
                 actionMessage = "守るひとを選んでください";
