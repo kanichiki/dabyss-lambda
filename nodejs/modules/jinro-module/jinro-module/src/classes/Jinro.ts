@@ -17,7 +17,7 @@ export class Jinro extends dabyss.Game {
     positionNames: { [key: string]: string };
 
     talkType: number;
-    isAlive: boolean[];
+    isAliveStatus: boolean[];
 
     /**
      * Jinroインスタンス作成
@@ -42,7 +42,7 @@ export class Jinro extends dabyss.Game {
         }
 
         this.talkType = -1;
-        this.isAlive = [];
+        this.isAliveStatus = [];
     }
 
 
@@ -178,6 +178,18 @@ export class Jinro extends dabyss.Game {
         dabyss.dynamoUpdate(this.gameTable, this.gameKey, "talk_type", this.talkType);
     }
 
+    async updateDefaultAliveStatus(): Promise<void> {
+        const positions: string[] = this.positions;
+        for (let i = 0: i < positions.length; i++) {
+            this.isAliveStatus[i] = true;
+        }
+        dabyss.dynamoUpdate(this.gameTable, this.gameKey, "is_alive_status", this.isAliveStatus);
+    }
+
+    async isAlive(index: number): Promise<boolean> {
+        return this.isAliveStatus[index];
+    }
+    
     async getWinnerIndexes() {
         let res: number[] = [];
         for (let i = 0; i < this.positions.length; i++) {
