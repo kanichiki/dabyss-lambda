@@ -10,13 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = void 0;
-const parts = require("../dabyss-module/constants/messageParts");
+const dabyss = require("dabyss");
 exports.main = () => __awaiter(void 0, void 0, void 0, function* () {
     return [
         {
             "type": "flex",
             "altText": "ゲーム一覧",
-            "contents": yield parts.gamesMessage()
+            "contents": yield dabyss.gamesMessage()
         }
     ];
 });

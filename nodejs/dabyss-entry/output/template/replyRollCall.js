@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = void 0;
-const parts = require("../dabyss-module/constants/messageParts");
+const dabyss = require("dabyss");
 exports.main = (gameName) => __awaiter(void 0, void 0, void 0, function* () {
     return [
         {
@@ -35,7 +35,7 @@ exports.main = (gameName) => __awaiter(void 0, void 0, void 0, function* () {
                                 "label": "参加",
                                 "text": "参加"
                             },
-                            "color": parts.mainColor,
+                            "color": dabyss.mainColor,
                             "style": "primary"
                         },
                         {
